@@ -1,0 +1,198 @@
+// 버튼 컬러 (블랙 계열)
+$btnPrimary: #333333;       // 기본: 진한 회색 (블랙 느낌)
+$btnPrimaryHover: #4d4d4d;  // hover: 조금 더 밝은 회색
+$btnPrimaryFocus: #1a1a1a;  // focus: 더 어두운 블랙 계열
+
+$btnSecondary: #385752;
+$btnSecondaryHover: #2a4642;
+$btnSecondaryFocus: #203431;
+
+$btnDanger: #91524b;
+$btnDangerHover: #74423c;
+$btnDangerFocus: #74423c;
+
+//GNB 활성화 컬러
+$activeColor: #ff7a00;
+
+//배경 컬러
+$bodyBackgroundColor: #f6f7f9;
+
+//카드 배경 컬러
+$cardBackgroundColor: #fff;
+
+//0516 added
+$utilities: () !default;
+//Generate utilites for Cursor
+$utilities: map-merge(
+        $utilities,
+        (
+            "cursor": (
+                property: cursor,
+                values: auto default pointer wait text move help not-allowed
+            ),
+        )
+);
+
+// Color system
+
+// scss-docs-start gray-color-variables
+$white: #fff !default;
+$gray-100: #f8f9fa !default;
+$gray-200: #e5e7ea !default;
+$gray-300: #dee2e6 !default;
+$gray-400: #ced4da !default;
+$gray-500: #adb5bd !default;
+$gray-600: #6b6b6b !default;
+$gray-700: #495057 !default;
+$gray-800: #343a40 !default;
+$gray-900: #212529 !default;
+$black: #000 !default;
+// scss-docs-end gray-color-variables
+
+// scss-docs-start color-variables
+$blue: #0d6efd !default;
+$indigo: #6610f2 !default;
+$purple: #6f42c1 !default;
+$pink: #d63384 !default;
+$red: #91524b !default;
+$orange: #fd7e14 !default;
+$yellow: #ffc107 !default;
+$green: #6a9c89 !default;
+$green-dark: #385752 !default;
+$teal: #20c997 !default;
+$cyan: #0dcaf0 !default;
+// scss-docs-end color-variables
+
+// scss-docs-start colors-map
+$colors: (
+    'blue': $blue,
+    'indigo': $indigo,
+    'purple': $purple,
+    'pink': $pink,
+    'red': $red,
+    'orange': $orange,
+    'yellow': $yellow,
+    'green': $green,
+    'teal': $teal,
+    'cyan': $cyan,
+    'black': $black,
+    'white': $white,
+    'gray': $gray-600,
+    'gray-dark': $gray-800,
+) !default;
+// scss-docs-end colors-map
+
+// scss-docs-start theme-color-variables
+$primary: $green !default;
+$secondary: $green-dark !default;
+$success: $green !default;
+$info: $cyan !default;
+$warning: $yellow !default;
+$danger: $red !default;
+$light: $gray-100 !default;
+$dark: $gray-900 !default;
+// scss-docs-end theme-color-variables
+
+// Spacing
+//
+// Control the default styling of most Bootstrap elements by modifying these
+// variables. Mostly focused on spacing.
+// You can add more entries to the $spacers map, should you need more variation.
+
+// scss-docs-start spacer-variables-maps
+$spacer: 4px !default;
+$spacers: (
+    0: 0,
+    1: $spacer * 1,
+    2: $spacer * 2,
+    3: $spacer * 3,
+    4: $spacer * 4,
+    5: $spacer * 5,
+    6: $spacer * 6,
+    7: $spacer * 7,
+    8: $spacer * 8,
+    9: $spacer * 9,
+    10: $spacer * 10,
+    11: $spacer * 11,
+    12: $spacer * 12,
+    13: $spacer * 13,
+    14: $spacer * 14,
+    15: $spacer * 15,
+    16: $spacer * 16,
+) !default;
+// scss-docs-end spacer-variables-maps
+
+// Body
+//
+// Settings for the `<body>` element.
+$body-color: $black !default;
+
+// Links
+//
+// Style anchor elements.
+
+$link-decoration: none !default;
+$link-hover-decoration: underline !default;
+
+// scss-docs-start border-radius-variables
+$border-radius: 0.5rem !default;
+
+// scss-docs-start font-variables
+// stylelint-disable value-keyword-case
+$font-family-sans-serif: Pretendard, system-ui, -apple-system, 'Segoe UI',
+Roboto, 'Helvetica Neue', 'Noto Sans', 'Liberation Sans', Arial, sans-serif,
+'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji' !default;
+$font-family-monospace: SFMono-Regular, Menlo, Monaco, Consolas,
+'Liberation Mono', 'Courier New', monospace !default;
+
+// $font-size-root affects the value of `rem`, which is used for as well font sizes, paddings, and margins
+// $font-size-base affects the font size of the body text
+$font-size-base: 1rem !default; // Assumes the browser default, typically `16px`
+$font-size-sm: $font-size-base * 0.9375 !default;
+$font-size-lg: $font-size-base * 1.0625 !default;
+$font-weight-normal: 400 !default;
+$font-weight-medium: 500 !default;
+$font-weight-base: $font-weight-medium !default;
+
+// scss-docs-start input-btn-variables
+$input-btn-padding-y: 0.531rem !default;
+$input-btn-padding-x: 1rem !default;
+$input-btn-font-size: $font-size-sm !default;
+$input-btn-padding-y-lg: 0.625rem !default;
+
+// scss-docs-start form-label-variables
+$form-label-margin-bottom: 0.25rem !default;
+$form-label-font-size: $font-size-sm !default;
+$form-label-font-weight: $font-weight-normal !default;
+$form-label-color: $gray-600 !default;
+
+// scss-docs-start form-input-variables
+$input-font-size: 1.063rem !default;
+$input-placeholder-color: #9ca1ad !default;
+
+// scss-docs-start form-check-variables
+$form-check-input-width: 1.25em !default;
+$form-check-padding-start: 26px !default;
+$form-check-margin-bottom: 0 !default;
+
+// scss-docs-start card-variables
+$card-spacer-y: 0 !default;
+$card-spacer-x: 0 !default;
+$card-border-width: 0 !default;
+
+// scss-docs-start modal-variables
+$card-box-shadow: 0px 8px 10px rgba(165, 165, 165, 0.1) !default;
+
+$tooltip-color: #000 !default;
+$tooltip-bg: white !default;
+$tooltip-opacity: 1 !default;
+
+$modal-inner-padding: 1.625rem !default;
+$badge-font-size: 0.813em !default;
+$badge-padding-y: 0.375em !default;
+$badge-padding-x: 0.5em !default;
+
+$form-switch-color: rgba(#fff, 1) !default;
+$form-switch-width: 3.25em !default;
+$form-switch-height: 1.875em !default;
+$form-switch-padding-start: 0 !default;
