@@ -1,5 +1,40 @@
 .borderbox {
   border: 1px solid #000000;
   border-radius: 16px;
-  width: 90%;
+  //width: 80%;
+}
+
+.roomTitle {
+  width: 194px;
+  height: 28px;
+  border-width: 1px;
+  angle: 0 deg;
+  opacity: 1;
+  background: rgba(255, 255, 255, 1);
+  border: 1px solid rgba(0, 0, 0, 1);
+  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+}
+
+.secretBox {
+  text-align: center;
+  width: 32px;
+  height: 28px;
+  border-width: 1px;
+  angle: 0 deg;
+  opacity: 1;
+  background: rgba(255, 255, 255, 1);
+  border: 1px solid rgba(0, 0, 0, 1);
+  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+}
+
+.personCountBox {
+  width: 64px;
+  height: 28px;
+  angle: 0 deg;
+  opacity: 1;
+  border-width: 1px;
+  background: rgba(255, 255, 255, 1);
+  border: 1px solid rgba(0, 0, 0, 1);
+  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+
 }

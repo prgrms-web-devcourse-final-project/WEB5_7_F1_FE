@@ -1,19 +1,8 @@
 import {Button, Form, Stack} from "react-bootstrap";
-import useConfirm from "../../hooks/useConfirm";
 import {useState} from "react";
-import ProfileImageZone from "./ProfileImageZone";
 import LoginLayout from "./LoginLayout";
-import EmailForm from "./EmailForm";
-import PasswordForm from "./PasswordForm";
 import NicknameForm from "./NicknameForm";
-import {useMutation} from "react-query";
-import axios from "axios";
 import {useNavigate} from "react-router-dom";
-import NameForm from "./NameForm";
-import PhoneForm from "./PhoneForm";
-import AddressForm from "./AddressForm";
-import Spinner from "../../shared/Spinner";
-import DetailAdrForm from "./DetailAdrForm";
 
 const Signup = () => {
     const [nickname, setNickname] = useState("");

@@ -1,7 +1,14 @@
-import {Button, Form, Stack} from "react-bootstrap";
+import {Button, Col, Form, Row, Stack} from "react-bootstrap";
 import {useState} from "react";
 import styles from "./room.module.scss";
 import RoomCard from "./RoomCard";
+
+const roomCardList = [
+    { id: 1, isSecret: false, isPlay: false, title: '겜할 사람 급구 ㄱ', totalPerson: 8, currentPerson: 4 },
+    { id: 2, isSecret: true, isPlay: true, title: '용호초로 나온나', totalPerson: 8, currentPerson: 8 },
+    { id: 3, isSecret: false, isPlay: false, title: '친친만', totalPerson: 2, currentPerson: 2 },
+    { id: 4, isSecret: true, isPlay: false, title: '놀 사람', totalPerson: 8, currentPerson: 4 },
+]; // 필요 시 실제 데이터로 교체
 
 const RoomList = () => {
     const [keyword, setKeyword] = useState("")
@@ -22,7 +29,7 @@ const RoomList = () => {
     }
     return (
         <>
-            <Stack direction={"horizontal"} className={"justify-content-center m-10"}>
+            <Stack direction={"horizontal"} className={"justify-content-center mx-10 mt-10"}>
                 <div className={styles.borderbox} style={{ width: "500px" }}>
                     <Stack direction={"horizontal"} gap={5} className={"m-3"}>
                         <Form.Label>방이름</Form.Label>
@@ -38,14 +45,20 @@ const RoomList = () => {
                 </div>
             </Stack>
             <Button variant={"warning"} className={"ms-auto me-10 text-black"}>방 생성하기</Button>
-            <Stack direction={"horizontal"} gap={10} className={"m-10"}>
-                <RoomCard />
-                <RoomCard />
-            </Stack>
-            <Stack direction={"horizontal"} gap={10} className={"m-10"}>
-                <RoomCard />
-                <RoomCard />
-            </Stack>
+            {roomCardList.reduce((rows, _, index) => {
+                if (index % 2 === 0) {
+                    rows.push(roomCardList.slice(index, index + 2));
+                }
+                return rows;
+            }, []).map((rowItems, rowIndex) => (
+                <Row key={rowIndex} className="m-10">
+                    {rowItems.map((item, colIndex) => (
+                        <Col key={colIndex} md={6} className={"d-flex justify-content-center"}>
+                            <RoomCard room={item}/>
+                        </Col>
+                    ))}
+                </Row>
+            ))}
         </>
     );
 }

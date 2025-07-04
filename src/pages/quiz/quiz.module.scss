@@ -1,0 +1,19 @@
+.quizCard {
+  width: 100px;
+  //height: 200px;
+  min-width: 240px;
+  border-radius: Radius/200;
+  border-width: Stroke/Border;
+  padding: 20px;
+  angle: 0 deg;
+  opacity: 1;
+  background: var(--Background-Default-Default, rgba(255, 255, 255, 1));
+  border: 1px solid var(--Border-Default-Default, rgba(217, 217, 217, 1));
+
+}
+
+.quizCard img {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
