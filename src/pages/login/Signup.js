@@ -29,7 +29,7 @@ const Signup = () => {
                 <NicknameForm nickname={nickname} setNickname={setNickname} error={error} setError={setError} setInputStatus={setInputStatus} />
                 <Stack direction={"horizontal"} gap={4}>
                     <Button type="submit" variant={"outline-dark"} className={"text-black w-100 no-hover"}
-                    onClick={() => navigate('/room/list')}>회원 가입 완료</Button>
+                    onClick={() => navigate('/room')}>회원 가입 완료</Button>
                     <Button type="button" variant={"primary"} className={"w-100"}>취소</Button>
                 </Stack>
             </Form>

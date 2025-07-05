@@ -1,7 +1,7 @@
 import Select from 'react-select';
 import { useMemo } from 'react';
 
-const ThemedSelect = ({ options, variant = 'primary', defaultValue, components }) => {
+const ThemedSelect = ({ options, variant = 'primary', defaultValue, components, ...rest }) => {
     const customStyles = useMemo(() => createSelectStyles(variant), [variant]);
 
     return (
@@ -11,6 +11,7 @@ const ThemedSelect = ({ options, variant = 'primary', defaultValue, components }
             options={options}
             styles={customStyles}
             placeholder="선택하세요"
+            {...rest}
         />
     );
 };
@@ -39,6 +40,7 @@ function createSelectStyles(theme = 'primary') {
             '&:hover': {
                 borderColor: main,
             },
+            minWidth: '120px',
             minHeight: '38px',
         }),
         option: (base, state) => ({

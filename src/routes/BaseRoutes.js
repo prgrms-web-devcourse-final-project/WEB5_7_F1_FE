@@ -4,6 +4,13 @@ import Error404 from "../pages/error/Error404";
 import Signup from "../pages/login/Signup";
 import Layout from "../layout/main/Layout";
 import RoomList from "../pages/room/RoomList";
+import QuizList from "../pages/quiz/QuizList";
+import CreateQuiz from "../pages/quiz/CreateQuiz";
+import GameLayout from "../layout/game/GameLayout";
+import GameReady from "../pages/game/GameReady";
+import GamePlay from "../pages/game/GamePlay";
+import Rank from "../pages/rank/Rank";
+import MyPage from "../pages/mypage/MyPage";
 
 const BaseRoutes = () => {
     return (
@@ -12,7 +19,22 @@ const BaseRoutes = () => {
             <Route exact path="/login" element={<Login />} />
             <Route exact path="/signup" element={<Signup />} />
             <Route path="/room" element={<Layout />}>
-                <Route path={"list"} element={<RoomList />} />
+                <Route index element={<RoomList />} />
+            </Route>
+            <Route path="/quiz" element={<Layout />}>
+                <Route index element={<QuizList />} />
+                <Route path={"create"} element={<CreateQuiz />} />
+                <Route path={":id/edit"} element={<CreateQuiz />} />
+            </Route>
+            <Route path="/game" element={<GameLayout />}>
+                <Route index element={<GameReady />} />
+                <Route path={"play"} element={<GamePlay />} />
+            </Route>
+            <Route path="/rank" element={<Layout />}>
+                <Route index element={<Rank />} />
+            </Route>
+            <Route path="/mypage" element={<Layout />}>
+                <Route index element={<MyPage />} />
             </Route>
             {/* 에러페이지 */}
             <Route path={"*"} element={<Error404 />} />

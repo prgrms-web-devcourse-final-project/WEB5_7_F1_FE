@@ -2,6 +2,7 @@ import {Button, Col, Form, Row, Stack} from "react-bootstrap";
 import {useState} from "react";
 import styles from "./room.module.scss";
 import RoomCard from "./RoomCard";
+import CreateRoomModal from "./CreateRoomModal";
 
 const roomCardList = [
     { id: 1, isSecret: false, isPlay: false, title: '겜할 사람 급구 ㄱ', totalPerson: 8, currentPerson: 4 },
@@ -11,7 +12,8 @@ const roomCardList = [
 ]; // 필요 시 실제 데이터로 교체
 
 const RoomList = () => {
-    const [keyword, setKeyword] = useState("")
+    const [keyword, setKeyword] = useState("");
+    const [createRoomModalOpen, setCreateRoomModalOpen] = useState();
 
     // 버튼 클릭 이벤트 처리
     const handleSearchClick = (e) => {
@@ -27,24 +29,27 @@ const RoomList = () => {
             handleSearchClick(e);
         }
     }
+
     return (
         <>
             <Stack direction={"horizontal"} className={"justify-content-center mx-10 mt-10"}>
                 <div className={styles.borderbox} style={{ width: "500px" }}>
-                    <Stack direction={"horizontal"} gap={5} className={"m-3"}>
-                        <Form.Label>방이름</Form.Label>
-                        <Form.Control
-                            type="text"
-                            placeholder="제목을 입력하세요.."
-                            value={keyword}
-                            onChange={(e) => setKeyword(e.target.value)}
-                            onKeyDown={handleKeyDown}
-                        />
-                        <Button>찾기</Button>
-                    </Stack>
+                    <Form>
+                        <Stack direction={"horizontal"} gap={5} className={"m-3"}>
+                            <Form.Label>방이름</Form.Label>
+                            <Form.Control
+                                type="text"
+                                placeholder="제목을 입력하세요.."
+                                value={keyword}
+                                onChange={(e) => setKeyword(e.target.value)}
+                                onKeyDown={handleKeyDown}
+                            />
+                            <Button>찾기</Button>
+                        </Stack>
+                    </Form>
                 </div>
             </Stack>
-            <Button variant={"warning"} className={"ms-auto me-10 text-black"}>방 생성하기</Button>
+            <Button variant={"warning"} className={"ms-auto me-10 text-black"} onClick={() => setCreateRoomModalOpen(true)}>방 생성하기</Button>
             {roomCardList.reduce((rows, _, index) => {
                 if (index % 2 === 0) {
                     rows.push(roomCardList.slice(index, index + 2));
@@ -59,6 +64,7 @@ const RoomList = () => {
                     ))}
                 </Row>
             ))}
+            <CreateRoomModal isOpen={createRoomModalOpen} onClose={() => setCreateRoomModalOpen(false)} />
         </>
     );
 }

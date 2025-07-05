@@ -1,4 +1,20 @@
 // 버튼 컬러 (블랙 계열)
+// 메인 테마 컬러
+$primary: #333333;
+// 버튼 (primary) 커스터마이징
+$btn-primary-bg: #333333;
+$btn-primary-border: #333333;
+$btn-primary-hover-bg: #4d4d4d;
+$btn-primary-hover-border: #4d4d4d;
+$btn-primary-focus-bg: #1a1a1a;
+$btn-primary-focus-border: #1a1a1a;
+// (선택) 텍스트 색상도 어울리게 조정
+$btn-primary-color: #ffffff;
+$btn-primary-hover-color: #ffffff;
+$btn-primary-focus-color: #ffffff;
+$btn-outline-primary-color: #000;
+
+// 버튼 컬러 (블랙 계열)
 $btnPrimary: #333333;       // 기본: 진한 회색 (블랙 느낌)
 $btnPrimaryHover: #4d4d4d;  // hover: 조금 더 밝은 회색
 $btnPrimaryFocus: #1a1a1a;  // focus: 더 어두운 블랙 계열

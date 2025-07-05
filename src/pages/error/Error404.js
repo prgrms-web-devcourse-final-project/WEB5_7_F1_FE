@@ -14,7 +14,7 @@ const Error404 = () => {
                 </p>
                 <div className="kw-login-button">
                     <button type="button" className="btn btn-primary btn-lg"
-                            onClick={() => navigate("/room/list")}>
+                            onClick={() => navigate("/room")}>
                         홈으로
                     </button>
                 </div>

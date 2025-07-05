@@ -1,4 +1,4 @@
-import {Modal} from "react-bootstrap";
+import {Button, Modal} from "react-bootstrap";
 import {useRecoilState} from "recoil";
 import {confirmAtom} from "../state/atoms";
 
@@ -33,23 +33,14 @@ const Confirm = () => {
                         {confirmState.html}
                     </p>
                     <div className="d-flex justify-content-center gap-3 mt-7 mb-4">
-                        <button
-                            type="button"
-                            className="btn btn-primary"
-                            onClick={handleConfirm}
-                            style={{ minWidth: "120px" }}
-                        >
+                        <Button onClick={handleConfirm}>
                             {confirmState.confirmButtonText}
-                        </button>
+                        </Button>
                         {/* callback 함수가 없으면 단순 정보성 Alert로 인식하여 별도의 취소버튼을 두지 않는다. */}
-                        {confirmState.callback && confirmState.showCancelButton ? <button
-                            type="button"
-                            className="btn btn-secondary"
-                            onClick={handleClose}
-                            style={{minWidth: "120px"}}
-                        >
-                            취소
-                        </button> : null}
+                        {confirmState.callback && confirmState.showCancelButton ?
+                            <Button variant={"outline-primary"} onClick={handleClose}>
+                                취소
+                            </Button> : null}
                     </div>
                 </div>
             </Modal.Body>

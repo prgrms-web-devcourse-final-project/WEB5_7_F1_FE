@@ -4,3 +4,11 @@
   width: 90%;
 }
 
+.roadBg {
+  background-image: url('../../assets/images/header-bg.png'); // 또는 import된 이미지 경로
+  background-size: cover;       // 이미지가 꽉 차게, 비율 유지하며 자름
+  background-repeat: no-repeat; // 반복 금지
+  background-position: center;  // 중앙 정렬
+  overflow: hidden;             // 넘치는 부분 숨김
+}
+
