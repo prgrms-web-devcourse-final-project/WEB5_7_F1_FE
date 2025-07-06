@@ -20,6 +20,7 @@
     "bootstrap": "^5.3.3",
     "clsx": "^2.1.1",
     "column-resizer": "^1.4.0",
+    "express": "^4.21.2",
     "filepond": "^4.32.7",
     "filepond-plugin-image-preview": "^4.6.12",
     "framer-motion": "^12.4.10",
