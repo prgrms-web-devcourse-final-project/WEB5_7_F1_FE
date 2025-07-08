@@ -20,7 +20,7 @@ const RoomCard = ({ room }) => {
         } else if (room.isSecret) {
             setRoomPasswordModalOpen(true);
         } else {
-            navigate('/room/1');
+            navigate('1', { state: room });
         }
     }
 

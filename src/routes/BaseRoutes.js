@@ -21,14 +21,14 @@ const BaseRoutes = () => {
             <Route path="/room" element={<Layout />}>
                 <Route index element={<RoomList />} />
             </Route>
+            <Route path="/room/:id" element={<GameLayout />}>
+                <Route index element={<GameReady />} />
+                <Route path={"play"} element={<GamePlay />} />
+            </Route>
             <Route path="/quiz" element={<Layout />}>
                 <Route index element={<QuizList />} />
                 <Route path={"create"} element={<CreateQuiz />} />
                 <Route path={":id/edit"} element={<CreateQuiz />} />
-            </Route>
-            <Route path="/game" element={<GameLayout />}>
-                <Route index element={<GameReady />} />
-                <Route path={"play"} element={<GamePlay />} />
             </Route>
             <Route path="/rank" element={<Layout />}>
                 <Route index element={<Rank />} />
