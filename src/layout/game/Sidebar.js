@@ -1,60 +1,47 @@
-import {Form, Stack} from "react-bootstrap";
-import styles from './game.module.scss'
+import { useLocation } from "react-router-dom"
+import LiveLeaderboard from "./components/LiveLeaderboard"
+import ParticipantsList from "./components/ParticipantsList"
+import ChatSection from "./components/ChatSection"
 
-const samplePerson = [
-    { color: "red", name: '지원', status: '방장' },
-    { color: "blue", name: '경찬', status: '준비' },
-    { color: "green", name: '강현', status: '준비' },
-    { color: "orange", name: '노을', status: '준비' },
-    { color: "purple", name: '석훈', status: '준비' },
-    { color: "yellow", name: '지현', status: '준비' },
-    { color: "pink", name: '영훈', status: '준비' },
-    { color: "navy", name: '지아', status: '대기' },
-];
+const leaderboardData = [
+    { rank: 1, name: "Lewis Hamilton", score: 12, color: "text-red-600" },
+    { rank: 2, name: "Max Verstappen", score: 11, color: "text-blue-600" },
+    { rank: 3, name: "Charles Leclerc", score: 10, color: "text-red-500" },
+    { rank: 4, name: "Lando Norris", score: 9, color: "text-orange-500" },
+    { rank: 5, name: "George Russell", score: 8, color: "text-cyan-500" },
+    { rank: 6, name: "Fernando Alonso", score: 7, color: "text-green-600" },
+    { rank: 7, name: "Oscar Piastri", score: 6, color: "text-purple-600" },
+    { rank: 8, name: "Carlos Sainz", score: 5, color: "text-pink-600" },
+]
 
-const Sidebar = () => {
+const participants = [
+    { id: "1", name: "Lewis Hamilton", status: "host", color: "text-red-600" },
+    { id: "2", name: "Max Verstappen", status: "ready", color: "text-blue-600" },
+    { id: "3", name: "Charles Leclerc", status: "ready", color: "text-red-500" },
+    { id: "4", name: "Lando Norris", status: "waiting", color: "text-orange-500" },
+    { id: "5", name: "George Russell", status: "ready", color: "text-cyan-500" },
+    { id: "6", name: "Fernando Alonso", status: "ready", color: "text-green-600" },
+    { id: "7", name: "Oscar Piastri", status: "waiting", color: "text-purple-600" },
+    { id: "8", name: "Carlos Sainz", status: "ready", color: "text-pink-600" },
+]
+
+const chatMessages = [
+    { id: "1", user: "Lewis Hamilton", message: "Great question! 🏎️", color: "text-red-600" },
+    { id: "2", user: "Max Verstappen", message: "This is getting intense!", color: "text-blue-600" },
+    { id: "3", user: "Charles Leclerc", message: "Close race for first place", color: "text-red-500" },
+    { id: "4", user: "Lando Norris", message: "Good luck everyone! 🏁", color: "text-orange-500" },
+]
+
+function Sidebar() {
+    const location = useLocation()
+    const isGamePlay = location.pathname.includes("/play")
+
     return (
-        <div className="p-3" style={{ minWidth: "30%", borderRadius: 0 }}>
-            <Stack className={`${styles.borderCard}  m-5`} direction="vertical">
-                {/* 참여자 목록 */}
-                <Stack gap={2} className="m-4 bg-white" style={{ overflowY: 'auto', maxHeight: '200px' }}>
-                    참여자 목록
-                    {samplePerson.map((item, index) => {
-                        return <Stack key={index} direction={"horizontal"} className={"justify-content-between"}>
-                            <Stack direction="horizontal" className="align-items-center">
-                                <span className={`${styles.colorBox} bg-${item.color}`} />
-                                <span>{item.name}</span>
-                            </Stack>
-                            <span>{item.status}</span>
-                        </Stack>
-                    })}
-                </Stack>
-                {/* 채팅 내용 - 고정 높이 + 스크롤 */}
-                <Stack
-                    gap={2}
-                    className="m-4"
-                    style={{
-                        overflowY: 'auto',
-                        // minHeight: "20%"
-                        // padding: '1rem',
-                    }}
-                >
-                    <span className={"text-red"}>chat1</span>
-                    <span className={"text-blue"}>chat2</span>
-                    <span className={"text-green"}>chat3</span>
-                    <span className={"text-orange"}>chat4</span>
-                    <span className={"text-purple"}>chat5</span>
-                    <span className={"text-yellow"}>chat6</span>
-                    <span className={"text-pink"}>chat7</span>
-                    <span className={"text-navy"}>chat8</span>
-                </Stack>
-                {/* 입력창 */}
-                <Form className={"mx-4 mb-4"}>
-                    <Form.Control type="text" placeholder="채팅을 입력하세요..." className="w-100" />
-                </Form>
-            </Stack>
-        </div>
-    );
+        <aside className="w-72 bg-white border-r border-gray-200 flex flex-col">
+            {isGamePlay ? <LiveLeaderboard entries={leaderboardData} /> : <ParticipantsList participants={participants} />}
+            <ChatSection messages={chatMessages} />
+        </aside>
+    )
 }
 
-export default Sidebar;
+export default Sidebar

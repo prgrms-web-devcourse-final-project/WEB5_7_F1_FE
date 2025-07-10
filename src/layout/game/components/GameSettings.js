@@ -1,0 +1,102 @@
+"use client"
+
+import { useState } from "react"
+import { useNavigate } from "react-router-dom"
+import { Settings } from "lucide-react"
+
+function GameSettings({ isHost = false, roomId, isReady = false, onReadyToggle }) {
+  const [timePerQuestion, setTimePerQuestion] = useState("30초")
+  const [questionCount, setQuestionCount] = useState(25)
+  const navigate = useNavigate()
+
+  const handleStartGame = () => {
+    navigate(`/room/${roomId}/play`)
+  }
+
+  return (
+      <div className="bg-white rounded-2xl shadow-lg p-6 mb-6">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+          <Settings className="w-5 h-5 mr-2 text-red-600" />
+          게임 설정
+        </h3>
+
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">퀴즈 카테고리</label>
+            {isHost ? (
+                <button className="w-full px-4 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium">
+                  퀴즈 선택
+                </button>
+            ) : (
+                <div className="w-full px-4 py-3 bg-gray-100 text-gray-600 rounded-lg font-medium">
+                  F1 2024 시즌 퀴즈 (방장이 선택함)
+                </div>
+            )}
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">제한 시간</label>
+              {isHost ? (
+                  <select
+                      value={timePerQuestion}
+                      onChange={(e) => setTimePerQuestion(e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 appearance-none bg-white bg-no-repeat bg-right pr-8"
+                      style={{
+                        backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e")`,
+                        backgroundPosition: "right 0.5rem center",
+                        backgroundSize: "1.5em 1.5em",
+                      }}
+                  >
+                    <option>15초</option>
+                    <option>30초</option>
+                    <option>45초</option>
+                    <option>60초</option>
+                  </select>
+              ) : (
+                  <div className="w-full px-3 py-2 bg-gray-100 text-gray-600 rounded-lg">{timePerQuestion}</div>
+              )}
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">문제 수</label>
+              {isHost ? (
+                  <input
+                      type="number"
+                      min="10"
+                      max="80"
+                      value={questionCount}
+                      onChange={(e) => setQuestionCount(Number.parseInt(e.target.value) || 30)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                      placeholder="문제 수를 입력하세요 (10-80)"
+                  />
+              ) : (
+                  <div className="w-full px-3 py-2 bg-gray-100 text-gray-600 rounded-lg">{questionCount}문제</div>
+              )}
+            </div>
+          </div>
+
+          <div className="pt-4">
+            {isHost ? (
+                <button
+                    onClick={handleStartGame}
+                    className="w-full px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-semibold"
+                >
+                  게임 시작
+                </button>
+            ) : (
+                <button
+                    onClick={onReadyToggle}
+                    className={`w-full px-6 py-3 rounded-lg transition-colors font-semibold ${
+                        isReady ? "bg-red-600 text-white hover:bg-red-700" : "bg-blue-600 text-white hover:bg-blue-700"
+                    }`}
+                >
+                  {isReady ? "준비 취소" : "준비 완료"}
+                </button>
+            )}
+          </div>
+        </div>
+      </div>
+  )
+}
+
+export default GameSettings
