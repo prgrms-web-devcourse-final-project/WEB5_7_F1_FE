@@ -1,21 +1,24 @@
-import {useNavigate} from "react-router-dom";
-import {Button, Image} from "react-bootstrap";
-import LoginLayout from "./LoginLayout";
+"use client"
+
+import { useNavigate } from "react-router-dom"
 import mainLogo from "../../assets/images/main-logo-rect.png"
+import styles from "./Login.module.scss"
 
 const Login = () => {
-    const navigate = useNavigate();
+  const navigate = useNavigate()
 
-    return (
-        <LoginLayout>
-            <div>
-                <Image src={mainLogo} width={"100%"} height={"50%"} />
-            </div>
-            <div className="kw-login-button mt-4">
-                <Button variant={"primary"} onClick={() => navigate('/signup')}>뇌피셜 입장하기</Button>
-            </div>
-        </LoginLayout>
-    );
+  return (
+    <div className={styles.loginContainer}>
+      <div className={styles.loginCard}>
+        <div className={styles.loginLogo}>
+          <img src={mainLogo || "/placeholder.svg"} alt="뇌피셜 로고" className={styles.loginLogoImage} />
+        </div>
+        <button className={styles.loginButton} onClick={() => navigate("/signup")}>
+          뇌피셜 입장하기
+        </button>
+      </div>
+    </div>
+  )
 }
 
-export default Login;
+export default Login

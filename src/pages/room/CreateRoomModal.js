@@ -1,80 +1,125 @@
-import {Button, Form, Modal, Stack} from "react-bootstrap";
-import {useState} from "react";
-import ThemedSelect from "../../shared/ThemedSelect";
-import {useNavigate} from "react-router-dom";
+"use client"
 
-const options = [
-    { value: '2', label: '2' },
-    { value: '3', label: '3' },
-    { value: '4', label: '4' },
-    { value: '5', label: '5' },
-    { value: '6', label: '6' },
-    { value: '7', label: '7' },
-    { value: '8', label: '8' },
-];
+import { useState } from "react"
+import styles from "./room.module.scss"
 
 const CreateRoomModal = ({ isOpen, onClose }) => {
-    const [title, setTitle] = useState();
-    const [personCount, setPersonCount] = useState();
-    const [isSecret, setSecret] = useState(false);
-    const [password, setPassword] = useState();
-    const navigate = useNavigate();
+  const [title, setTitle] = useState("")
+  const [personCount, setPersonCount] = useState("2")
+  const [isSecret, setSecret] = useState(false)
+  const [password, setPassword] = useState("")
 
-    const handlePasswordChange = (e) => {
-        setPassword(e.target.value);
+  const handlePasswordChange = (e) => {
+    setPassword(e.target.value)
+  }
+
+  const handleIsSecretChange = (e) => {
+    const checked = e.target.checked
+    setSecret(checked)
+    if (!checked) {
+      setPassword("")
     }
+  }
 
-    const handleIsSecretChange = (e) => {
-        const checked = e.target.checked;
-        setSecret(checked);
-        if (!checked) {
-            setPassword(''); // 체크 해제 시 초기화 (선택사항)
-        }
-    };
+  const handleSubmit = () => {
+    // 방 생성 로직
+    console.log("방 생성:", { title, personCount, isSecret, password })
+    onClose()
+  }
 
-    return (
-        <Modal show={isOpen} centered backdrop="static"  >
-            <Modal.Header closeButton onHide={onClose}>
-                <Modal.Title>방 만들기</Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-                <Stack gap={3}>
-                    <Form.Group controlId={"forRoomTitle"} >
-                        <Form.Label>방 제목</Form.Label>
-                        <Form.Control
-                            type="text"
-                            value={title}
-                            onChange={(e) => setTitle(e.target.value)}
-                        />
-                    </Form.Group>
-                    <Form.Group controlId={"forPersonCount"} >
-                        <Form.Label>방 인원</Form.Label>
-                        <ThemedSelect options={options} defaultValue={{ value: '2', label: '2' }} />
-                    </Form.Group>
-                    <Form.Group controlId="forUsePassword">
-                        <Form.Check
-                            type="checkbox"
-                            label="비밀번호 사용"
-                            checked={isSecret}
-                            onChange={handleIsSecretChange}
-                        />
-                    </Form.Group>
-                    <Form.Group controlId={"forRoomPassword"} >
-                        <Form.Label>비밀번호</Form.Label>
-                        <Form.Control
-                            type="text"
-                            value={password}
-                            onChange={handlePasswordChange}
-                            disabled={!isSecret}
-                        />
-                    </Form.Group>
-                </Stack>
-            </Modal.Body>
-            <Modal.Footer className={"d-flex justify-content-center"}>
-                <Button onClick={onClose}>만들기</Button>
-            </Modal.Footer>
-        </Modal>
-    );
+  const handleOverlayClick = (e) => {
+    if (e.target === e.currentTarget) {
+      onClose()
+    }
+  }
+
+  if (!isOpen) return null
+
+  return (
+    <div className={styles.modalOverlay} onClick={handleOverlayClick}>
+      <div className={styles.modalContent}>
+        <div className={styles.modalHeader}>
+          <h2 className={styles.modalTitle}>방 만들기</h2>
+          <button className={styles.closeButton} onClick={onClose}>
+            ×
+          </button>
+        </div>
+
+        <div className={styles.modalBody}>
+          <div className={styles.formGroup}>
+            <label className={styles.formLabel} htmlFor="roomTitle">
+              방 제목
+            </label>
+            <input
+              id="roomTitle"
+              type="text"
+              className={styles.formInput}
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder="방 제목을 입력하세요"
+            />
+          </div>
+
+          <div className={styles.formGroup}>
+            <label className={styles.formLabel} htmlFor="personCount">
+              방 인원
+            </label>
+            <select
+              id="personCount"
+              className={styles.formSelect}
+              value={personCount}
+              onChange={(e) => setPersonCount(e.target.value)}
+            >
+              <option value="2">2명</option>
+              <option value="3">3명</option>
+              <option value="4">4명</option>
+              <option value="5">5명</option>
+              <option value="6">6명</option>
+              <option value="7">7명</option>
+              <option value="8">8명</option>
+            </select>
+          </div>
+
+          <div className={styles.checkboxGroup}>
+            <input
+              id="usePassword"
+              type="checkbox"
+              className={styles.checkbox}
+              checked={isSecret}
+              onChange={handleIsSecretChange}
+            />
+            <label className={styles.checkboxLabel} htmlFor="usePassword">
+              비밀번호 사용
+            </label>
+          </div>
+
+          <div className={styles.formGroup}>
+            <label className={styles.formLabel} htmlFor="roomPassword">
+              비밀번호
+            </label>
+            <input
+              id="roomPassword"
+              type="password"
+              className={styles.formInput}
+              value={password}
+              onChange={handlePasswordChange}
+              disabled={!isSecret}
+              placeholder={isSecret ? "비밀번호를 입력하세요" : "비밀번호 사용을 체크해주세요"}
+            />
+          </div>
+        </div>
+
+        <div className={styles.modalFooter}>
+          <button className={`${styles.modalButton} ${styles.cancelButton}`} onClick={onClose}>
+            취소
+          </button>
+          <button className={styles.modalButton} onClick={handleSubmit}>
+            만들기
+          </button>
+        </div>
+      </div>
+    </div>
+  )
 }
 
-export default CreateRoomModal;
+export default CreateRoomModal

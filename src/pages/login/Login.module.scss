@@ -13,7 +13,7 @@
   font-weight: 600;
   line-height: 21px;
   border-radius: 4px;
-  white-space: noWrap;
+  white-space: nowrap;
 }
 
 .timerText {
@@ -56,5 +56,467 @@
 
 .active {
   background: url(../../assets/images/icon/ico_password.svg) no-repeat 50% 50%;
+}
 
+/* Login Styles with F1 Racing Track Pattern */
+.loginContainer {
+  min-height: 100vh;
+  background: 
+    linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #2d2d2d 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+.loginContainer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    /* F1 트랙 라인들 */
+    linear-gradient(90deg, transparent 0%, rgba(220, 53, 69, 0.1) 2%, transparent 4%),
+    linear-gradient(0deg, transparent 0%, rgba(220, 53, 69, 0.05) 1%, transparent 2%),
+    /* 체크무늬 패턴 */
+    linear-gradient(45deg, rgba(255, 255, 255, 0.02) 25%, transparent 25%),
+    linear-gradient(-45deg, rgba(255, 255, 255, 0.02) 25%, transparent 25%),
+    /* 미묘한 그리드 */
+    linear-gradient(90deg, rgba(255, 255, 255, 0.01) 1px, transparent 1px),
+    linear-gradient(0deg, rgba(255, 255, 255, 0.01) 1px, transparent 1px);
+  background-size: 
+    200px 100vh,
+    100vw 150px,
+    40px 40px,
+    40px 40px,
+    20px 20px,
+    20px 20px;
+  background-position:
+    0 0,
+    0 0,
+    0 0,
+    20px 20px,
+    0 0,
+    0 0;
+  animation: trackMove 20s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes trackMove {
+  0% { 
+    background-position: 
+      0 0,
+      0 0,
+      0 0,
+      20px 20px,
+      0 0,
+      0 0;
+  }
+  100% { 
+    background-position: 
+      200px 0,
+      0 150px,
+      40px 40px,
+      60px 60px,
+      20px 20px,
+      20px 20px;
+  }
+}
+
+.loginContainer::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    radial-gradient(circle at 20% 80%, rgba(220, 53, 69, 0.08) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(220, 53, 69, 0.05) 0%, transparent 50%),
+    radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.02) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.loginCard {
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 50%, #1a1a1a 100%);
+  border: 1px solid rgba(220, 53, 69, 0.2);
+  border-radius: 20px;
+  padding: 60px 50px;
+  width: 100%;
+  max-width: 450px;
+  box-shadow: 
+    0 25px 50px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    0 0 0 1px rgba(220, 53, 69, 0.1);
+  backdrop-filter: blur(10px);
+  position: relative;
+  z-index: 1;
+  text-align: center;
+}
+
+.loginCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    linear-gradient(45deg, transparent 30%, rgba(220, 53, 69, 0.03) 50%, transparent 70%);
+  border-radius: 20px;
+  pointer-events: none;
+}
+
+.loginLogo {
+  margin-bottom: 40px;
+  position: relative;
+}
+
+.loginLogoImage {
+  max-width: 100%;
+  height: auto;
+  filter: 
+    drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3))
+    drop-shadow(0 0 20px rgba(220, 53, 69, 0.2));
+}
+
+.loginButton {
+  width: 100%;
+  height: 56px;
+  background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
+  color: white;
+  border: 2px solid rgba(220, 53, 69, 0.3);
+  border-radius: 12px;
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+  }
+  
+  &:hover {
+    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+    border-color: rgba(220, 53, 69, 0.8);
+    transform: translateY(-2px);
+    box-shadow: 
+      0 12px 30px rgba(220, 53, 69, 0.4),
+      0 0 20px rgba(220, 53, 69, 0.3);
+    
+    &::before {
+      left: 100%;
+    }
+  }
+  
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+/* Signup Styles - Formula 1 Inspired */
+.signupContainer {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #2d2d2d 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+.signupContainer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    radial-gradient(circle at 20% 80%, rgba(220, 53, 69, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(220, 53, 69, 0.05) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.signupCard {
+  background: rgba(255, 255, 255, 0.98);
+  border-radius: 20px;
+  padding: 50px 40px;
+  width: 100%;
+  max-width: 520px;
+  box-shadow: 
+    0 25px 50px rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  position: relative;
+  z-index: 1;
+}
+
+.signupHeader {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.signupTitle {
+  font-size: 32px;
+  font-weight: 800;
+  color: #000;
+  margin-bottom: 8px;
+  letter-spacing: -0.5px;
+}
+
+.signupSubtitle {
+  font-size: 16px;
+  color: #666;
+  font-weight: 400;
+}
+
+.signupForm {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.formLabel {
+  font-size: 16px;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.nicknameInputGroup {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.nicknameInput {
+  flex: 1;
+  height: 56px;
+  padding: 0 20px;
+  border: 2px solid #e1e5e9;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 500;
+  background: #f8f9fa;
+  transition: all 0.3s ease;
+  
+  &:focus {
+    outline: none;
+    border-color: #dc3545;
+    background: #ffffff;
+    box-shadow: 0 0 0 4px rgba(220, 53, 69, 0.1);
+    transform: translateY(-1px);
+  }
+  
+  &::placeholder {
+    color: #999;
+    font-weight: 400;
+  }
+}
+
+.checkButton {
+  height: 56px;
+  padding: 0 24px;
+  background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  min-width: 100px;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(220, 53, 69, 0.4);
+  }
+  
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+.errorMessage {
+  color: #dc3545;
+  font-size: 14px;
+  font-weight: 500;
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.successMessage {
+  color: #28a745;
+  font-size: 14px;
+  font-weight: 500;
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.buttonGroup {
+  display: flex;
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.primaryButton {
+  flex: 1;
+  height: 56px;
+  background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+  }
+  
+  &:hover {
+    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 12px 30px rgba(220, 53, 69, 0.4);
+    
+    &::before {
+      left: 100%;
+    }
+  }
+  
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+.secondaryButton {
+  flex: 1;
+  height: 56px;
+  background: transparent;
+  color: #333;
+  border: 2px solid #e1e5e9;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    border-color: #dc3545;
+    color: #dc3545;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  }
+  
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+.statusIndicator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.statusIcon {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: bold;
+}
+
+.statusIconError {
+  background: #dc3545;
+  color: white;
+}
+
+.statusIconSuccess {
+  background: #28a745;
+  color: white;
+}
+
+/* 반응형 */
+@media (max-width: 768px) {
+  .loginCard {
+    padding: 50px 30px;
+    margin: 20px;
+  }
+  
+  .signupCard {
+    padding: 40px 30px;
+    margin: 20px;
+  }
+  
+  .signupTitle {
+    font-size: 28px;
+  }
+  
+  .nicknameInputGroup {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .checkButton {
+    width: 100%;
+  }
+  
+  .buttonGroup {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 480px) {
+  .loginCard {
+    padding: 40px 25px;
+  }
+  
+  .signupCard {
+    padding: 30px 20px;
+  }
+  
+  .signupTitle {
+    font-size: 24px;
+  }
 }

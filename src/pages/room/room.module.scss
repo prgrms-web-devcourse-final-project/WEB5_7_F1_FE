@@ -1,40 +1,894 @@
-.borderbox {
-  border: 1px solid #000000;
-  border-radius: 16px;
-  //width: 80%;
+/* Base Styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-.roomTitle {
-  width: 194px;
-  height: 28px;
-  border-width: 1px;
-  angle: 0 deg;
+body {
+  font-family: 'Arial', sans-serif;
+  background-color: #f6f2ef;
+  color: #333;
+  min-height: 100vh;
+}
+
+/* Header */
+.header {
+  background: linear-gradient(90deg, #000000 0%, #1a1a1a 100%);
+  padding: 15px 0;
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
+  position: relative;
+}
+
+.headerContent {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  position: relative;
+}
+
+.userInfo {
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.logo {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  img {
+    height: 50px;
+    width: auto;
+  }
+}
+
+.navMenu {
+  display: flex;
+  gap: 30px;
+  list-style: none;
+}
+
+.navItem {
+  padding: 10px 20px;
+  cursor: pointer;
+  border-radius: 25px;
+  transition: all 0.3s ease;
+  font-weight: 500;
+  text-decoration: none;
+  color: #ffffff;
+
+  &:hover {
+    background: linear-gradient(45deg, #dc3545, #c82333);
+    transform: translateY(-2px);
+  }
+
+  &.active {
+    background: linear-gradient(45deg, #dc3545, #c82333);
+  }
+}
+
+/* Main Content */
+.mainContainer {
+  background-color: #f6f2ef;
+  min-height: 100vh;
+}
+
+.mainContent {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+.searchSection {
+  padding: 30px;
+  border-radius: 15px;
+  margin-bottom: 40px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.searchInputGroup {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.searchLabel {
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+  min-width: 80px;
+}
+
+.searchInput {
+  flex: 1;
+  padding: 15px 20px;
+  border: 2px solid #ddd;
+  border-radius: 10px;
+  background: #f8f9fa;
+  color: #333;
+  font-size: 16px;
+  transition: all 0.3s ease;
+
+  &:focus {
+    border-color: #dc3545;
+    outline: none;
+    box-shadow: 0 0 10px rgba(220, 53, 69, 0.2);
+    transform: scale(1.02);
+  }
+}
+
+.searchButton {
+  background: linear-gradient(145deg, #ff1e1e, #e10600); 
+  color: white;
+  border: none;
+  padding: 15px 30px;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(220, 53, 69, 0.4);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+.createRoomBtn {
+  
+  background: linear-gradient(145deg, rgb(255, 215, 0), rgb(255, 179, 0));
+  color: rgb(51, 51, 51);
+  border: none;
+  padding: 15px 30px;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(40, 167, 69, 0.4);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+/* Quiz Grid */
+.quizGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 30px;
+  margin-top: 40px;
+}
+
+.quizCard {
+  background: #ffffff;
+  border-radius: 15px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  position: relative;
+  border: 2px solid transparent;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+
+  &:hover {
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    border-color: #dc3545;
+  }
+}
+
+.quizThumbnail {
+  width: 100%;
+  height: 200px;
+  background: linear-gradient(45deg, #e9ecef, #dee2e6);
+  position: relative;
+  overflow: hidden;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.privateIndicator {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.quizInfo {
+  padding: 20px;
+}
+
+.quizTitle {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.quizStats {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.quizParticipants {
+  background: rgba(220, 53, 69, 0.1);
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 14px;
+  color: #dc3545;
+
+  &.full {
+    background: rgba(108, 117, 125, 0.1);
+    color: #6c757d;
+  }
+}
+
+.quizStatus {
+  background: linear-gradient(45deg, #dc3545, #c82333);
+  padding: 8px 15px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: bold;
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:hover:not(:disabled) {
+    transform: scale(1.05);
+  }
+
+  &:disabled {
+    background: #6c757d;
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+
+  &:active:not(:disabled) {
+    transform: scale(0.95);
+  }
+}
+
+/* Hover Card */
+.hoverCard {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: rgba(0, 0, 0, 0.95);
+  padding: 15px;
+  border-radius: 10px;
+  min-width: 200px;
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: all 0.3s ease;
+  z-index: 100;
+  border: 1px solid #dc3545;
+
+  h3 {
+    color: #dc3545;
+    margin-bottom: 5px;
+    font-size: 16px;
+  }
+
+  p {
+    color: #cccccc;
+    font-size: 14px;
+    margin-bottom: 5px;
+  }
+}
+
+.quizCard:hover .hoverCard {
   opacity: 1;
-  background: rgba(255, 255, 255, 1);
-  border: 1px solid rgba(0, 0, 0, 1);
-  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+  transform: translateY(0);
 }
 
-.secretBox {
+/* Pagination */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-top: 40px;
+
+  button {
+    background: #ffffff;
+    color: #333;
+    border: 1px solid #ddd;
+    padding: 10px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+
+    &:hover {
+      background: #dc3545;
+      color: white;
+      border-color: #dc3545;
+    }
+
+    &.active {
+      background: linear-gradient(45deg, #dc3545, #c82333);
+      color: white;
+      border-color: #dc3545;
+    }
+
+    &:active {
+      transform: scale(0.95);
+    }
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .headerContent {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .logo {
+    position: static;
+    transform: none;
+  }
+
+  .navMenu {
+    flex-wrap: wrap;
+    gap: 15px;
+  }
+
+  .searchSection {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .searchInputGroup {
+    flex-direction: column;
+  }
+
+  .quizGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Modal Styles */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(5px);
+}
+
+.modalContent {
+  background: #ffffff;
+  border-radius: 15px;
+  padding: 0;
+  max-width: 500px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  transform: scale(0.9);
+  animation: modalAppear 0.3s ease forwards;
+}
+
+@keyframes modalAppear {
+  to {
+    transform: scale(1);
+  }
+}
+
+.modalHeader {
+  background: linear-gradient(90deg, #000000 0%, #1a1a1a 100%);
+  color: white;
+  padding: 20px 30px;
+  border-radius: 15px 15px 0 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modalTitle {
+  font-size: 20px;
+  font-weight: bold;
+  margin: 0;
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: rotate(90deg);
+  }
+}
+
+.modalBody {
+  padding: 30px;
+}
+
+.formGroup {
+  margin-bottom: 25px;
+}
+
+.formLabel {
+  display: block;
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.formInput {
+  width: 100%;
+  padding: 15px 20px;
+  border: 2px solid #ddd;
+  border-radius: 10px;
+  background: #f8f9fa;
+  color: #333;
+  font-size: 16px;
+  transition: all 0.3s ease;
+  
+  &:focus {
+    border-color: #dc3545;
+    outline: none;
+    box-shadow: 0 0 10px rgba(220, 53, 69, 0.2);
+    transform: scale(1.02);
+  }
+  
+  &:disabled {
+    background: #e9ecef;
+    color: #6c757d;
+    cursor: not-allowed;
+  }
+}
+
+.formSelect {
+  width: 100%;
+  padding: 15px 20px;
+  border: 2px solid #ddd;
+  border-radius: 10px;
+  background: #f8f9fa;
+  color: #333;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  
+  &:focus {
+    border-color: #dc3545;
+    outline: none;
+    box-shadow: 0 0 10px rgba(220, 53, 69, 0.2);
+  }
+}
+
+.checkboxGroup {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.checkbox {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+}
+
+.checkboxLabel {
+  font-size: 16px;
+  color: #333;
+  cursor: pointer;
+  margin: 0;
+}
+
+.modalFooter {
+  padding: 20px 30px;
+  border-top: 1px solid #eee;
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+}
+
+.modalButton {
+  background: linear-gradient(45deg, #dc3545, #c82333);
+  color: white;
+  border: none;
+  padding: 15px 30px;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 120px;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(220, 53, 69, 0.4);
+  }
+  
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+.cancelButton {
+  background: #6c757d;
+  
+  &:hover {
+    background: #5a6268;
+    box-shadow: 0 5px 15px rgba(108, 117, 125, 0.4);
+  }
+}
+
+/* Full Person Modal Styles */
+.alertModal {
+  background: #ffffff;
+  border-radius: 15px;
+  padding: 0;
+  max-width: 400px;
+  width: 90%;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  transform: scale(0.9);
+  animation: modalAppear 0.3s ease forwards;
   text-align: center;
-  width: 32px;
-  height: 28px;
-  border-width: 1px;
-  angle: 0 deg;
-  opacity: 1;
-  background: rgba(255, 255, 255, 1);
-  border: 1px solid rgba(0, 0, 0, 1);
-  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
 }
 
-.personCountBox {
-  width: 64px;
-  height: 28px;
-  angle: 0 deg;
-  opacity: 1;
-  border-width: 1px;
-  background: rgba(255, 255, 255, 1);
-  border: 1px solid rgba(0, 0, 0, 1);
-  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+.alertModalBody {
+  padding: 40px 30px 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
 
+.alertIcon {
+  font-size: 60px;
+  color: #dc3545;
+  margin-bottom: 10px;
+}
+
+.alertMessage {
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.alertSubMessage {
+  font-size: 14px;
+  color: #666;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.alertModalFooter {
+  padding: 20px 30px 30px;
+  display: flex;
+  justify-content: center;
+}
+
+.alertButton {
+  background: linear-gradient(45deg, #dc3545, #c82333);
+  color: white;
+  border: none;
+  padding: 15px 40px;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 120px;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(220, 53, 69, 0.4);
+  }
+  
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+/* 반응형 */
+@media (max-width: 768px) {
+  .alertModal {
+    width: 95%;
+    margin: 20px;
+  }
+  
+  .alertModalBody {
+    padding: 30px 20px 20px;
+  }
+  
+  .alertIcon {
+    font-size: 50px;
+  }
+  
+  .alertMessage {
+    font-size: 16px;
+  }
+  
+  .alertModalFooter {
+    padding: 15px 20px 25px;
+  }
+}
+
+/* Password Modal Styles */
+.passwordModal {
+  background: #ffffff;
+  border-radius: 15px;
+  padding: 0;
+  max-width: 450px;
+  width: 90%;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  transform: scale(0.9);
+  animation: modalAppear 0.3s ease forwards;
+}
+
+.passwordModalHeader {
+  background: linear-gradient(90deg, #000000 0%, #1a1a1a 100%);
+  color: white;
+  padding: 20px 30px;
+  border-radius: 15px 15px 0 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.passwordModalTitle {
+  font-size: 20px;
+  font-weight: bold;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.passwordModalBody {
+  padding: 30px;
+}
+
+.passwordInputGroup {
+  margin-bottom: 25px;
+}
+
+.passwordLabel {
+  display: block;
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.passwordInput {
+  width: 100%;
+  padding: 15px 20px;
+  border: 2px solid #ddd;
+  border-radius: 10px;
+  background: #f8f9fa;
+  color: #333;
+  font-size: 16px;
+  transition: all 0.3s ease;
+  letter-spacing: 2px;
+  
+  &:focus {
+    border-color: #dc3545;
+    outline: none;
+    box-shadow: 0 0 10px rgba(220, 53, 69, 0.2);
+    transform: scale(1.02);
+    background: #ffffff;
+  }
+  
+  &::placeholder {
+    color: #999;
+    letter-spacing: normal;
+  }
+}
+
+.passwordModalFooter {
+  padding: 20px 30px 30px;
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+}
+
+.enterButton {
+  background: linear-gradient(45deg, #28a745, #218838);
+  color: white;
+  border: none;
+  padding: 15px 40px;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 120px;
+  
+  &:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(40, 167, 69, 0.4);
+  }
+  
+  &:active:not(:disabled) {
+    transform: scale(0.95);
+  }
+  
+  &:disabled {
+    background: #6c757d;
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+}
+
+.passwordHint {
+  font-size: 14px;
+  color: #666;
+  text-align: center;
+  margin-top: 15px;
+  padding: 10px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border-left: 4px solid #dc3545;
+}
+
+/* 반응형 */
+@media (max-width: 768px) {
+  .passwordModal {
+    width: 95%;
+    margin: 20px;
+  }
+  
+  .passwordModalHeader {
+    padding: 15px 20px;
+  }
+  
+  .passwordModalTitle {
+    font-size: 18px;
+  }
+  
+  .passwordModalBody {
+    padding: 25px 20px;
+  }
+  
+  .passwordModalFooter {
+    padding: 15px 20px 25px;
+    flex-direction: column;
+    
+    .enterButton,
+    .cancelButton {
+      width: 100%;
+    }
+  }
+}
+
+.quizGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 25px;
+  margin-top: 40px;
+  min-height: 600px; /* 최소 높이 설정으로 레이아웃 안정화 */
+}
+
+/* 반응형 그리드 */
+@media (max-width: 1200px) {
+  .quizGrid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+}
+
+@media (max-width: 900px) {
+  .quizGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+}
+
+@media (max-width: 600px) {
+  .quizGrid {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+}
+
+/* 검색 정보 스타일 */
+.searchInfo {
+  margin: 20px 0;
+  padding: 15px 20px;
+  background: #f8f9fa;
+  border-radius: 10px;
+  border-left: 4px solid #dc3545;
+  
+  p {
+    margin: 0;
+    font-size: 16px;
+    color: #333;
+    font-weight: 500;
+  }
+}
+
+/* 검색 결과 없음 스타일 */
+.noResults {
+  text-align: center;
+  padding: 60px 20px;
+  
+  p {
+    font-size: 18px;
+    color: #666;
+    margin-bottom: 20px;
+  }
+  
+  button {
+    background: linear-gradient(45deg, #dc3545, #c82333);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(220, 53, 69, 0.4);
+    }
+    
+    &:active {
+      transform: scale(0.95);
+    }
+  }
 }
