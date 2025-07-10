@@ -28,6 +28,7 @@
     "jwt-decode": "^4.0.0",
     "lodash": "^4.17.21",
     "lottie-react": "^2.4.1",
+    "lucide-react": "^0.525.0",
     "quill": "^1.3.7",
     "quill-image-resize": "^3.0.9",
     "react": "^18.3.1",
@@ -73,5 +74,10 @@
       "last 1 safari version"
     ]
   },
-  "proxy": "https://api.devapi.store"
+  "proxy": "https://api.devapi.store",
+  "devDependencies": {
+    "autoprefixer": "^10.4.21",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^3.4.17"
+  }
 }

@@ -7,10 +7,11 @@ import RoomList from "../pages/room/RoomList";
 import QuizList from "../pages/quiz/QuizList";
 import CreateQuiz from "../pages/quiz/CreateQuiz";
 import GameLayout from "../layout/game/GameLayout";
-import GameReady from "../pages/game/GameReady";
 import GamePlay from "../pages/game/GamePlay";
 import Rank from "../pages/rank/Rank";
 import MyPage from "../pages/mypage/MyPage";
+import HostPage from "../pages/game/HostPage";
+import ParticipantPage from "../pages/game/ParticipantPage";
 
 const BaseRoutes = () => {
     return (
@@ -22,7 +23,8 @@ const BaseRoutes = () => {
                 <Route index element={<RoomList />} />
             </Route>
             <Route path="/room/:id" element={<GameLayout />}>
-                <Route index element={<GameReady />} />
+                <Route index element={<HostPage />} />
+                <Route path={"participant"} element={<ParticipantPage />} />
                 <Route path={"play"} element={<GamePlay />} />
             </Route>
             <Route path="/quiz" element={<Layout />}>
