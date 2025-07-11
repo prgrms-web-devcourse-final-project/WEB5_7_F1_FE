@@ -45,13 +45,11 @@ function ParticipantPage() {
         </header>
 
         {/* Body */}
-        <div className="flex-1 p-8">
+        <div className="flex-1 p-8 flex items-center">
           <div className="max-w-6xl mx-auto">
             <QuizInfoCard />
-            <GameSettings isHost={false} roomId={roomId} isReady={isReady} onReadyToggle={handleReadyToggle} />
-
             {/* 참여자 상태 */}
-            <div className="bg-white rounded-2xl shadow-lg p-6">
+            <div className="bg-white rounded-2xl shadow-lg p-6 space-y-10">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">내 상태</h3>
               <div
                   className={`flex items-center justify-between p-4 rounded-lg transition-colors ${
@@ -68,6 +66,14 @@ function ParticipantPage() {
                 {isReady ? "방장이 게임을 시작하기를 기다리는 중..." : "준비 완료 버튼을 눌러주세요"}
               </span>
               </div>
+              <button
+                  onClick={handleReadyToggle}
+                  className={`w-full px-6 py-3 rounded-lg transition-colors font-semibold ${
+                      isReady ? "bg-red-600 text-white hover:bg-red-700" : "bg-blue-600 text-white hover:bg-blue-700"
+                  }`}
+              >
+                {isReady ? "준비 취소" : "준비 완료"}
+              </button>
             </div>
           </div>
         </div>

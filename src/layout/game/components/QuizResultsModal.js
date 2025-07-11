@@ -17,19 +17,6 @@ function QuizResultsModal({ isVisible, results, onClose }) {
     setTimeout(onClose, 300) // 애니메이션 완료 후 닫기
   }
 
-  const getRankIcon = (rank) => {
-    switch (rank) {
-      case 1:
-        return <Crown className="w-4 h-4 text-yellow-500" />
-      case 2:
-        return <Medal className="w-4 h-4 text-gray-500" />
-      case 3:
-        return <Medal className="w-4 h-4 text-orange-500" />
-      default:
-        return null
-    }
-  }
-
   const getRankBg = (rank) => {
     switch (rank) {
       case 1:
@@ -48,11 +35,11 @@ function QuizResultsModal({ isVisible, results, onClose }) {
       case 1:
         return "bg-yellow-500"
       case 2:
-        return "bg-gray-500"
+        return "bg-gray-400"
       case 3:
         return "bg-orange-500"
       default:
-        return "bg-gray-400"
+        return "text-gray-500"
     }
   }
 
@@ -103,7 +90,6 @@ function QuizResultsModal({ isVisible, results, onClose }) {
                         >
                           {result.rank}
                         </div>
-                        {getRankIcon(result.rank)}
                       </div>
                     </td>
                     <td className="px-6 py-4 text-sm font-medium text-gray-900">{result.name}</td>

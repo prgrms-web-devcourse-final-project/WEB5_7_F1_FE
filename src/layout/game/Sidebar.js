@@ -37,7 +37,7 @@ function Sidebar() {
     const isGamePlay = location.pathname.includes("/play")
 
     return (
-        <aside className="w-72 bg-white border-r border-gray-200 flex flex-col">
+        <aside className="w-96 bg-white border-r border-gray-200 flex flex-col">
             {isGamePlay ? <LiveLeaderboard entries={leaderboardData} /> : <ParticipantsList participants={participants} />}
             <ChatSection messages={chatMessages} />
         </aside>
