@@ -1,18 +1,6 @@
 import { Trophy, Crown, Medal } from "lucide-react"
 
 function LiveLeaderboard({ entries }) {
-  const getRankIcon = (rank) => {
-    switch (rank) {
-      case 1:
-        return <Crown className="w-3 h-3 text-yellow-500" />
-      case 2:
-      case 3:
-        return <Medal className={`w-3 h-3 ${rank === 2 ? "text-gray-500" : "text-orange-500"}`} />
-      default:
-        return null
-    }
-  }
-
   const getRankBg = (rank) => {
     switch (rank) {
       case 1:
@@ -31,11 +19,11 @@ function LiveLeaderboard({ entries }) {
       case 1:
         return "bg-yellow-500"
       case 2:
-        return "bg-gray-500"
+        return "bg-gray-400"
       case 3:
         return "bg-orange-500"
       default:
-        return "bg-gray-400"
+        return "text-gray-500"
     }
   }
 
@@ -52,28 +40,27 @@ function LiveLeaderboard({ entries }) {
   }
 
   return (
-    <div className="p-3">
-      <h3 className="text-sm font-semibold text-gray-800 mb-3 flex items-center">
-        <Trophy className="w-4 h-4 mr-2 text-yellow-600" />
-        Live Ranking ({entries.length})
-      </h3>
-      <div className="space-y-1">
-        {entries.map((entry) => (
-          <div key={entry.rank} className={`flex items-center space-x-2 p-1.5 rounded-md ${getRankBg(entry.rank)}`}>
-            <div
-              className={`w-6 h-6 ${getRankColor(entry.rank)} text-white rounded-full flex items-center justify-center text-xs font-bold`}
-            >
-              {entry.rank}
-            </div>
-            <div className="flex-1 min-w-0">
-              <div className="text-xs font-medium text-gray-900 truncate">{entry.name}</div>
-              <div className={`text-xs font-medium ${getScoreColor(entry.rank)}`}>{entry.score} correct</div>
-            </div>
-            {getRankIcon(entry.rank)}
-          </div>
-        ))}
+      <div className="p-4">
+        <h3 className="text-base font-semibold text-gray-800 mb-4 flex items-center">
+          <Trophy className="w-5 h-5 mr-2 text-yellow-600" />
+          실시간 랭킹 ({entries.length})
+        </h3>
+        <div className="space-y-0">
+          {entries.map((entry) => (
+              <div key={entry.rank} className={`flex items-center space-x-3 p-1 rounded-md ${getRankBg(entry.rank)}`}>
+                <div
+                    className={`w-7 h-7 ${getRankColor(entry.rank)} text-white rounded-full flex items-center justify-center text-sm font-bold`}
+                >
+                  {entry.rank}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="text-sm font-medium text-gray-900 truncate">{entry.name}</div>
+                </div>
+                <div className={`text-sm font-medium ${getScoreColor(entry.rank)}`}>정답 {entry.score}개</div>
+              </div>
+          ))}
+        </div>
       </div>
-    </div>
   )
 }
 

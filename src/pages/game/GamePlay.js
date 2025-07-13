@@ -97,7 +97,7 @@ function GamePlay() {
                 {/* Quiz Header */}
                 <div className="flex items-center justify-between mb-8">
                     <div className="bg-white rounded-lg px-4 py-2 shadow-sm">
-                        <span className="text-sm text-gray-600">Question</span>
+                        <span className="text-lg text-gray-600">문제</span>
                         <span className="text-lg font-bold text-gray-900 ml-2">
               {quizCompleted ? sampleQuestions.length : currentQuestion + 1} / {sampleQuestions.length}
             </span>
@@ -106,7 +106,7 @@ function GamePlay() {
                 </div>
 
                 {/* Question Content */}
-                <div className="flex-1">
+                <div className="flex-1 flex justify-center">
                     {quizCompleted ? (
                         <QuizCompleted totalQuestions={sampleQuestions.length} />
                     ) : (

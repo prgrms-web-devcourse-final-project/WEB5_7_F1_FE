@@ -31,7 +31,7 @@ function F1StartingLights({ onComplete }) {
   if (!isVisible) {
     return (
       <div className="fixed inset-0 bg-gray-900 z-50 flex flex-col items-center justify-center opacity-0 transition-opacity duration-500">
-        <div className="text-white text-4xl font-bold mb-8">F1 Quiz Starting...</div>
+        <div className="text-white text-4xl font-bold mb-8">🏁 시동 거세요, 퀴즈 레이스가 곧 시작됩니다!</div>
         <div className="flex gap-10 mb-8">
           {[0, 1, 2, 3, 4].map((index) => (
             <div
@@ -44,14 +44,14 @@ function F1StartingLights({ onComplete }) {
             />
           ))}
         </div>
-        <div className="text-white text-xl font-medium">Get Ready!</div>
+        <div className="text-white text-xl font-medium">출발 신호를 주목하세요!</div>
       </div>
     )
   }
 
   return (
     <div className="fixed inset-0 bg-gray-900 z-50 flex flex-col items-center justify-center">
-      <div className="text-white text-4xl font-bold mb-8">F1 Quiz Starting...</div>
+      <div className="text-white text-4xl font-bold mb-8">🏁 시동 거세요, 퀴즈 레이스가 곧 시작됩니다!</div>
       <div className="flex gap-10 mb-8">
         {[0, 1, 2, 3, 4].map((index) => (
           <div
@@ -64,7 +64,7 @@ function F1StartingLights({ onComplete }) {
           />
         ))}
       </div>
-      <div className="text-white text-xl font-medium">Get Ready!</div>
+      <div className="text-white text-xl font-medium">출발 신호를 주목하세요!</div>
     </div>
   )
 }

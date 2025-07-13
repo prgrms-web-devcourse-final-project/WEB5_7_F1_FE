@@ -7,7 +7,6 @@ function QuizInfoCard() {
         <div className="flex items-center space-x-3">
           <div>
             <h2 className="text-2xl font-bold text-gray-900">F1 2024 시즌 퀴즈</h2>
-            <p className="text-gray-600">포뮬러 1 지식을 테스트해보세요</p>
           </div>
         </div>
       </div>
