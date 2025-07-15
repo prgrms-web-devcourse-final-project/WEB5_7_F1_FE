@@ -2,10 +2,184 @@
   border: 1px solid #000000;
   border-radius: 16px;
   padding: 50px;
-
-
   display: flex;
   justify-content: center; /* 가로 중앙 */
   align-items: center;     /* 세로 중앙 */
-  //text-align: center;      /* 텍스트 중앙 (선택) */
 }
+
+.container {
+  min-height: 100vh;
+  background-color: white;
+  color: #111827;
+  position: relative;
+}
+
+.background-pattern {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  opacity: 0.1;
+  background-image:
+      linear-gradient(45deg, transparent 40%, rgba(0, 0, 0, 0.05) 50%, transparent 60%),
+      linear-gradient(-45deg, transparent 40%, rgba(0, 0, 0, 0.05) 50%, transparent 60%);
+  background-size: 20px 20px;
+  z-index: -1;
+}
+
+.main {
+  position: relative;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.card {
+  max-width: 1024px;
+  margin: 0 auto;
+  background: linear-gradient(135deg, #f9fafb 0%, white 50%, #f9fafb 100%);
+  border: 2px solid rgba(220, 38, 38, 0.3);
+  border-radius: 0.5rem;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.cardHeader {
+  background: linear-gradient(90deg, #dc2626 0%, #b91c1c 50%, #000000 100%);
+  border-bottom: 1px solid rgba(220, 38, 38, 0.3);
+  border-top-left-radius: 0.5rem;
+  border-top-right-radius: 0.5rem;
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.headerText {
+  color: white;
+  font-size: 1.25rem;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.form {
+  padding: 2rem;
+}
+
+.section {
+  margin-bottom: 1.5rem;
+}
+
+.inputRow {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.label {
+  font-weight: bold;
+  color: #111827;
+  width: 80px;
+  flex-shrink: 0;
+}
+
+.input {
+  flex: 1;
+  max-width: 300px;
+  padding: 0.5rem 1rem;
+  border: 1px solid #e10600; /* 수정: gradient는 border에 직접 적용 불가 */
+  border-radius: 0.25rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+/* 원하는 경우 :focus 시 색상 강조도 추가 가능 */
+.input:focus {
+  border-color: #ff1e1e;
+}
+
+.button {
+  padding: 0.5rem 1rem;
+  background: linear-gradient(145deg, #ff1e1e, #e10600);
+  color: white;
+  font-weight: 600;
+  border-radius: 0.25rem;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.statsCard {
+  background: linear-gradient(135deg, #f9fafb 0%, white 50%, #f9fafb 100%);
+  border: 1px solid rgba(220, 38, 38, 0.2);
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.statsHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  span {
+    font-weight: 900;
+    color: #111827;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+}
+
+.statsRow {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.buttonGroup {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  padding-top: 1.5rem;
+}
+
+.saveButton {
+  padding: 0.75rem 1.5rem;
+  border: 2px solid #dc2626;
+  color: #dc2626;
+  background-color: transparent;
+  font-weight: bold;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.deleteButton {
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(145deg, #ff1e1e, #e10600);
+  color: white;
+  font-weight: bold;
+  border-radius: 0.25rem;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.rankBadge {
+  background: linear-gradient(145deg, #ff1e1e, #e10600);
+  color: white;
+  font-weight: bold;
+  padding: 0.25rem 0.75rem;
+  border-radius: 0.25rem;
+}
+
+.score {
+  color: #dc2626;
+  font-weight: 900;
+  font-size: 1.25rem;
+}
+
+
