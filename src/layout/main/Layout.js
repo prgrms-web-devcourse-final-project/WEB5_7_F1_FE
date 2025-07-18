@@ -2,6 +2,19 @@ import {Outlet, useLocation, NavLink, useNavigate} from "react-router-dom";
 import {Button, Image, Nav, Stack} from "react-bootstrap";
 import mainLogoRect from "../../assets/images/main-logo-rect.png";
 import styles from "./Layout.module.scss"
+import axios from "axios";
+import {useApiQuery} from "../../hooks/useApiQuery";
+import {useApiMutation} from "../../hooks/useApiMutation";
+
+const authMeRequest = async () => {
+    const response = await axios.get(`/auth/me`);
+    return response.data;
+};
+
+const logoutRequest = async () => {
+    await axios.post(`/logout`);
+}
+
 
 const Layout = () => {
     const location = useLocation();
@@ -106,6 +119,17 @@ const Layout = () => {
         }
     };
 
+    const { isLoading, data } = useApiQuery(
+        ["authme"],
+        () => authMeRequest(),
+    );
+
+    const { mutate: logoutMutate } = useApiMutation(logoutRequest, {
+        onSuccess: () => {
+            navigate("/login");
+        },
+    });
+
     return (
         <>
             {/* Fixed Header */}
@@ -125,7 +149,7 @@ const Layout = () => {
                         <div className="d-flex align-items-center gap-4">
                             {/* User Badge */}
                             <div style={f1Styles.userBadge}>
-                                빵야빵야님
+                                {data?.name}님
                             </div>
 
                             {/* Navigation */}
@@ -216,7 +240,7 @@ const Layout = () => {
 
                                 <button
                                     style={f1Styles.logoutButton}
-                                    onClick={() => navigate('/login')}
+                                    onClick={() => logoutMutate()}
                                     onMouseEnter={(e) => {
                                         e.target.style.backgroundColor = '#38384a';
                                         e.target.style.borderColor = '#e10600';

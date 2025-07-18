@@ -4,26 +4,42 @@ import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import NicknameForm from "./NicknameForm"
 import styles from "./Login.module.scss"
+import axios from "axios";
+import {useApiMutation} from "../../hooks/useApiMutation";
+import {useApiQuery} from "../../hooks/useApiQuery";
+
+const signupRequest = async (nickname) => {
+    const params = {
+        nickname
+    };
+    const response = await axios.post(`/signup`, params);
+    return response.data;
+};
 
 const Signup = () => {
     const [nickname, setNickname] = useState("")
     const [error, setError] = useState({
         nickname: "",
-    })
+    });
     const [inputStatus, setInputStatus] = useState({
         nickname: false,
-    })
-    const navigate = useNavigate()
+    });
+    const navigate = useNavigate();
+    const { mutate: signupMutate } = useApiMutation(signupRequest, {
+        onSuccess: (data) => {
+            console.log(data);
+            // 회원가입 완료 후 방 목록으로 이동
+            navigate("/room");
+        },
+    });
 
     const handleSignupClick = (e) => {
-        e.preventDefault()
-        if (nickname.length === 0) {
-            setError({ ...error, nickname: "별명을 입력하세요." })
-            return
+        e.preventDefault();
+        if (inputStatus.nickname) {
+            signupMutate(nickname);
+        } else {
+            setError({ ...error, nickname: "중복체크를 먼저 해주세요." })
         }
-
-        // 회원가입 완료 후 방 목록으로 이동
-        navigate("/room")
     }
 
     const handleCancel = () => {
@@ -48,7 +64,7 @@ const Signup = () => {
                     />
 
                     <div className={styles.buttonGroup}>
-                        <button type="submit" className={styles.primaryButton}>
+                        <button type="submit" className={styles.primaryButton} onClick={handleSignupClick}>
                             회원가입 완료
                         </button>
                         <button type="button" className={styles.secondaryButton} onClick={handleCancel}>
