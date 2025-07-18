@@ -3,10 +3,10 @@
 import { useState } from "react"
 import styles from "./room.module.scss"
 
-const CreateRoomModal = ({ isOpen, onClose }) => {
-  const [title, setTitle] = useState("")
-  const [personCount, setPersonCount] = useState("2")
-  const [isSecret, setSecret] = useState(false)
+const CreateRoomModal = ({ isOpen, onClose, onSubmit }) => {
+  const [roomName, setRoomName] = useState("")
+  const [maxUserCount, setMaxUserCount] = useState("2")
+  const [locked, setLocked] = useState(false)
   const [password, setPassword] = useState("")
 
   const handlePasswordChange = (e) => {
@@ -15,7 +15,7 @@ const CreateRoomModal = ({ isOpen, onClose }) => {
 
   const handleIsSecretChange = (e) => {
     const checked = e.target.checked
-    setSecret(checked)
+    setLocked(checked)
     if (!checked) {
       setPassword("")
     }
@@ -23,8 +23,9 @@ const CreateRoomModal = ({ isOpen, onClose }) => {
 
   const handleSubmit = () => {
     // 방 생성 로직
-    console.log("방 생성:", { title, personCount, isSecret, password })
-    onClose()
+    console.log("방 생성:", { roomName, maxUserCount, locked, password })
+    onSubmit({ roomName, maxUserCount, locked, password });
+    onClose();
   }
 
   const handleOverlayClick = (e) => {
@@ -54,8 +55,8 @@ const CreateRoomModal = ({ isOpen, onClose }) => {
               id="roomTitle"
               type="text"
               className={styles.formInput}
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
+              value={roomName}
+              onChange={(e) => setRoomName(e.target.value)}
               placeholder="방 제목을 입력하세요"
             />
           </div>
@@ -67,8 +68,8 @@ const CreateRoomModal = ({ isOpen, onClose }) => {
             <select
               id="personCount"
               className={styles.formSelect}
-              value={personCount}
-              onChange={(e) => setPersonCount(e.target.value)}
+              value={maxUserCount}
+              onChange={(e) => setMaxUserCount(e.target.value)}
             >
               <option value="2">2명</option>
               <option value="3">3명</option>
@@ -85,7 +86,7 @@ const CreateRoomModal = ({ isOpen, onClose }) => {
               id="usePassword"
               type="checkbox"
               className={styles.checkbox}
-              checked={isSecret}
+              checked={locked}
               onChange={handleIsSecretChange}
             />
             <label className={styles.checkboxLabel} htmlFor="usePassword">
@@ -103,8 +104,8 @@ const CreateRoomModal = ({ isOpen, onClose }) => {
               className={styles.formInput}
               value={password}
               onChange={handlePasswordChange}
-              disabled={!isSecret}
-              placeholder={isSecret ? "비밀번호를 입력하세요" : "비밀번호 사용을 체크해주세요"}
+              disabled={!locked}
+              placeholder={locked ? "비밀번호를 입력하세요" : "비밀번호 사용을 체크해주세요"}
             />
           </div>
         </div>

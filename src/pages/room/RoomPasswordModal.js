@@ -4,27 +4,24 @@ import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import styles from "./room.module.scss"
 
-const RoomPasswordModal = ({ isOpen, onClose, onSave, roomTitle = "비밀방" }) => {
+const RoomPasswordModal = ({ isOpen, onClose, onSave, room }) => {
   const [password, setPassword] = useState("")
   const navigate = useNavigate()
 
   const handlePasswordChange = (e) => {
-    setPassword(e.target.value)
+    setPassword(e.target.value);
   }
 
   const handleSubmit = (e) => {
-    e.preventDefault()
+    e.preventDefault();
     if (password.trim()) {
       // 비밀번호 검증 로직 (실제로는 서버에서 검증)
-      console.log("입력된 비밀번호:", password)
+      console.log("입력된 비밀번호:", password, room)
 
       // onSave 콜백이 있으면 호출
       if (onSave) {
-        onSave(password)
+        onSave(room, password)
       }
-
-      // 방으로 이동
-      navigate("/room/1")
     }
   }
 

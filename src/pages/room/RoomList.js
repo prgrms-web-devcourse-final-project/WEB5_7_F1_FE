@@ -7,6 +7,25 @@ import FullPersonModal from "./FullPersonModal"
 import RoomPasswordModal from "./RoomPasswordModal"
 import styles from "./room.module.scss"
 import PaginationNavigator from "../../layout/PaginationNavigator.js"
+import {useApiQuery} from "../../hooks/useApiQuery";
+import axios from "axios";
+import {useApiMutation} from "../../hooks/useApiMutation";
+import {useNavigate} from "react-router-dom";
+
+const roomsRequest = async () => {
+  const response = await axios.get(`/rooms`);
+  return response.data;
+}
+
+const createRoomRequest = async (params) => {
+  const response = await axios.post(`/rooms`, params);
+  return response.data;
+}
+
+const enterRoomRequest = async (params) => {
+  const response = await axios.post(`/rooms/enterRoom`, params, {skipAuthInterceptor: true});
+  return response.data;
+}
 
 const RoomList = () => {
   const [searchTerm, setSearchTerm] = useState("")
@@ -17,165 +36,62 @@ const RoomList = () => {
   const [isFullModalOpen, setIsFullModalOpen] = useState(false)
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false)
   const [selectedRoom, setSelectedRoom] = useState(null)
-
+  const navigate = useNavigate();
   const ROOMS_PER_PAGE = 8 // 한 페이지당 8개
 
-  // 더미 데이터 (실제로는 API에서 가져올 것)
-  const dummyRooms = [
-    {
-      id: 1,
-      title: "전진만",
-      description: "퀴즈에 대한 설명입니다.",
-      creator: "나나나",
-      questionCount: 40,
-      currentPlayers: 1,
-      maxPlayers: 2,
-      isPrivate: false,
-      thumbnail: "https://images.unsplash.com/photo-1606092195730-5d7b9af1efc5?w=400&h=200&fit=crop",
+  const { data, refetch } = useApiQuery(
+      ["rooms"],
+      () => roomsRequest(),
+  );
+
+  const { mutate: createRoomMutate } = useApiMutation(createRoomRequest, {
+    onSuccess: (data) => {
+      console.log(data);
+      refetch();
     },
-    {
-      id: 2,
-      title: "농사짓",
-      description: "비밀방입니다. 비밀번호가 필요합니다.",
-      creator: "나나나",
-      questionCount: 40,
-      currentPlayers: 2,
-      maxPlayers: 3,
-      isPrivate: true,
-      thumbnail: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=400&h=200&fit=crop",
-    },
-    {
-      id: 3,
-      title: "집만사람 급구",
-      description: "퀴즈에 대한 설명입니다.",
-      creator: "나나나",
-      questionCount: 40,
-      currentPlayers: 8,
-      maxPlayers: 8,
-      isPrivate: false,
-      thumbnail: "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=400&h=200&fit=crop",
-    },
-    {
-      id: 4,
-      title: "암장 불가(예언)",
-      description: "비밀방입니다. 현재 인원이 가득 찼습니다.",
-      creator: "나나나",
-      questionCount: 40,
-      currentPlayers: 8,
-      maxPlayers: 8,
-      isPrivate: true,
-      thumbnail: "https://images.unsplash.com/photo-1557804506-669a67965ba0?w=400&h=200&fit=crop",
-    },
-    {
-      id: 5,
-      title: "경호초토 나나나",
-      description: "퀴즈에 대한 설명입니다.",
-      creator: "나나나",
-      questionCount: 40,
-      currentPlayers: 5,
-      maxPlayers: 8,
-      isPrivate: false,
-      thumbnail: "https://images.unsplash.com/photo-1581833971358-2c8b550f87b3?w=400&h=200&fit=crop",
-    },
-    // 추가 더미 데이터 (8개 이상 표시를 위해)
-    {
-      id: 6,
-      title: "테스트방 1",
-      description: "테스트용 방입니다.",
-      creator: "테스터",
-      questionCount: 20,
-      currentPlayers: 3,
-      maxPlayers: 6,
-      isPrivate: false,
-      thumbnail: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=400&h=200&fit=crop",
-    },
-    {
-      id: 7,
-      title: "테스트방 2",
-      description: "또 다른 테스트용 방입니다.",
-      creator: "테스터2",
-      questionCount: 30,
-      currentPlayers: 2,
-      maxPlayers: 4,
-      isPrivate: true,
-      thumbnail: "https://images.unsplash.com/photo-1517180102446-f3ece451e9d8?w=400&h=200&fit=crop",
-    },
-    {
-      id: 8,
-      title: "테스트방 3",
-      description: "세 번째 테스트용 방입니다.",
-      creator: "테스터3",
-      questionCount: 25,
-      currentPlayers: 1,
-      maxPlayers: 5,
-      isPrivate: false,
-      thumbnail: "https://images.unsplash.com/photo-1515378791036-0648a814c963?w=400&h=200&fit=crop",
-    },
-    {
-      id: 9,
-      title: "테스트방 4",
-      description: "네 번째 테스트용 방입니다.",
-      creator: "테스터4",
-      questionCount: 35,
-      currentPlayers: 4,
-      maxPlayers: 7,
-      isPrivate: false,
-      thumbnail: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=200&fit=crop",
-    },
-    {
-      id: 10,
-      title: "테스트방 5",
-      description: "다섯 번째 테스트용 방입니다.",
-      creator: "테스터5",
-      questionCount: 15,
-      currentPlayers: 6,
-      maxPlayers: 8,
-      isPrivate: true,
-      thumbnail: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=400&h=200&fit=crop",
-    },
-  ]
+  });
+
+  const { mutate: enterRoomMutate } = useApiMutation(enterRoomRequest, {
+    onSuccess: (data, variables) => {
+      // 임시로 그냥 모달 닫고 입장했다고 가정
+      setIsPasswordModalOpen(false);
+      setSelectedRoom(null);
+      navigate(`/room/${variables.roomId}`);
+    }
+  });
 
   useEffect(() => {
-    // 실제로는 API 호출
-    setRooms(dummyRooms)
-    setFilteredRooms(dummyRooms)
-  }, [])
+    if (data) {
+      console.log(rooms);
+      setRooms(data.rooms)
+      setFilteredRooms(data.rooms)
+    }
+  }, [data])
 
   const handleSearch = () => {
     // 검색 로직 구현
-    const filtered = dummyRooms.filter((room) => room.title.toLowerCase().includes(searchTerm.toLowerCase()))
+    const filtered = rooms.filter((room) => room.title.toLowerCase().includes(searchTerm.toLowerCase()))
     setFilteredRooms(filtered)
     setCurrentPage(1) // 검색 시 첫 페이지로 이동
   }
 
   const handleCreateRoom = (newRoomData) => {
-    console.log("방 생성하기:", newRoomData)
-    setIsModalOpen(false)
+    console.log("방 생성하기:", newRoomData);
+    createRoomMutate(newRoomData);
+    setIsModalOpen(false);
   }
 
   const handleEnterRoom = (room) => {
-    if (room.currentPlayers >= room.maxPlayers) {
-      setIsFullModalOpen(true)
-      return
-    }
-
-    if (room.isPrivate) {
-      setSelectedRoom(room)
+    if (room.locked) {
+      setSelectedRoom(room);
       setIsPasswordModalOpen(true)
-      return
+    } else {
+      enterRoomMutate({ roomId: room.roomId, password: "" })
     }
-
-    // 비밀방 아니면 바로 입장 로직
-    console.log("방 입장:", room)
   }
 
-  const handlePasswordSubmit = (password) => {
-    // 여기서 실제 비밀번호 검증 로직 또는 API 호출 가능
-    console.log(`입력한 비밀번호: ${password} / 방 제목: ${selectedRoom.title}`)
-    // 임시로 그냥 모달 닫고 입장했다고 가정
-    setIsPasswordModalOpen(false)
-    setSelectedRoom(null)
-    // 실제 입장 처리 추가 (ex. 페이지 이동 등)
+  const handlePasswordSubmit = (room, password) => {
+    enterRoomMutate({ roomId: room.roomId, password: password });
   }
 
   const handlePageChange = (page) => {
@@ -271,7 +187,7 @@ const RoomList = () => {
         isOpen={isPasswordModalOpen}
         onClose={() => setIsPasswordModalOpen(false)}
         onSave={handlePasswordSubmit}
-        roomTitle={selectedRoom ? selectedRoom.title : "비밀방"}
+        room={selectedRoom}
       />
     </div>
   )
