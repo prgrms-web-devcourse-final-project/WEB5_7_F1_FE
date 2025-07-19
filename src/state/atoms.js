@@ -22,9 +22,32 @@ export const confirmAtom = atom({
     },
 });
 
-export const userAtom = atom({
-    key: 'userAtom', // 고유 키
-    default: {
+export const roomSettingAtom = atom({
+    key: 'roomSetting',
+    default: {},
+});
 
-    },
+export const playerListAtom = atom({
+    key: 'playerList',
+    default: [],
+});
+
+export const gameSettingAtom = atom({
+    key: 'gameSetting',
+    default: {},
+});
+
+export const stompSendMessageAtom = atom({
+    key: 'stompSendMessageAtom',
+    default: null, // sendMessage 함수가 들어올 예정
+});
+
+export const chatAtom = atom({
+    key: 'chat',
+    default: null,
+});
+
+export const systemNoticeAtom = atom({
+    key: 'systemNotice',
+    default: null,
 });

@@ -23,7 +23,6 @@ const CreateRoomModal = ({ isOpen, onClose, onSubmit }) => {
 
   const handleSubmit = () => {
     // 방 생성 로직
-    console.log("방 생성:", { roomName, maxUserCount, locked, password })
     onSubmit({ roomName, maxUserCount, locked, password });
     onClose();
   }

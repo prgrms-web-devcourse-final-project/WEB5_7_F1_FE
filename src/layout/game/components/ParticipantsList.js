@@ -1,6 +1,9 @@
 import { Users, Car, Crown, CheckCircle, Clock } from "lucide-react"
+import {useRecoilValue} from "recoil";
+import {playerListAtom} from "../../../state/atoms";
 
-function ParticipantsList({ participants }) {
+function ParticipantsList() {
+  const players = useRecoilValue(playerListAtom);
   const getStatusText = (status) => {
     switch (status) {
       case "host":
@@ -44,24 +47,24 @@ function ParticipantsList({ participants }) {
       <div className="p-4">
         <h3 className="text-base font-semibold text-gray-800 mb-4 flex items-center">
           <Users className="w-5 h-5 mr-2 text-red-600" />
-          참가자 ({participants.length})
+          참가자 ({players.length})
         </h3>
         <div className="space-y-0">
-          {participants.map((participant) => (
+          {players.map((player) => (
               <div
-                  key={participant.id}
+                  key={player.color}
                   className={`flex items-center space-x-3 p-1 rounded-md ${
-                      participant.status === "host" ? "bg-red-50" : "hover:bg-gray-50"
+                      player.status === "host" ? "bg-red-50" : "hover:bg-gray-50"
                   }`}
               >
-                <Car className={`w-5 h-5 ${participant.color}`} />
+                <Car className={`w-5 h-5 ${player.color}`} />
                 <div className="flex-1 min-w-0">
-                  <div className="text-sm font-medium text-gray-900 truncate">{participant.name}</div>
+                  <div className="text-sm font-medium text-gray-900 truncate">{player.nickname}</div>
                 </div>
-                <div className={`text-sm font-medium ${getStatusColor(participant.status)}`}>
-                  {getStatusText(participant.status)}
+                <div className={`text-sm font-medium ${getStatusColor(player.status)}`}>
+                  {getStatusText(player.status)}
                 </div>
-                {getStatusIcon(participant.status)}
+                {getStatusIcon(player.status)}
               </div>
           ))}
         </div>

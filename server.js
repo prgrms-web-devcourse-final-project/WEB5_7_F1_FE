@@ -2,7 +2,7 @@ const express = require('express');
 const path = require('path');
 
 const app = express();
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || 3000;
 
 // 정적 파일 제공 (build 디렉토리)
 app.use(express.static(path.join(__dirname, 'build')));

@@ -46,8 +46,7 @@ const RoomList = () => {
 
   const { mutate: createRoomMutate } = useApiMutation(createRoomRequest, {
     onSuccess: (data) => {
-      console.log(data);
-      refetch();
+      navigate(`/room/${data.roomId}`);
     },
   });
 
@@ -76,7 +75,6 @@ const RoomList = () => {
   }
 
   const handleCreateRoom = (newRoomData) => {
-    console.log("방 생성하기:", newRoomData);
     createRoomMutate(newRoomData);
     setIsModalOpen(false);
   }
