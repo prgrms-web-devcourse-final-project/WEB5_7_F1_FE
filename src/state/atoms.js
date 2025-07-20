@@ -22,9 +22,14 @@ export const confirmAtom = atom({
     },
 });
 
+export const loginUserAtom = atom({
+    key: 'loginUser',
+    default: null,
+});
+
 export const roomSettingAtom = atom({
     key: 'roomSetting',
-    default: {},
+    default: null,
 });
 
 export const playerListAtom = atom({
@@ -34,7 +39,7 @@ export const playerListAtom = atom({
 
 export const gameSettingAtom = atom({
     key: 'gameSetting',
-    default: {},
+    default: null,
 });
 
 export const stompSendMessageAtom = atom({

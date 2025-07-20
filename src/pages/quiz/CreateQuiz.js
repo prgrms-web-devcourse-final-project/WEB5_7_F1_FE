@@ -1,12 +1,31 @@
-import {Button, Col, Row, Stack, Form} from "react-bootstrap";
+import {Button, Col, Form, Row, Stack} from "react-bootstrap";
 import QuizItem from "./QuizItem";
 import {useState} from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import {faPlus, faImage, faListUl, faSave, faTimes} from "@fortawesome/free-solid-svg-icons";
-import styles from './quiz.module.scss'
-import ImageZone from "../../shared/ImageZone";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome"
+import {
+    faImage,
+    faListUl,
+    faPlus,
+    faSave,
+    faTimes
+} from "@fortawesome/free-solid-svg-icons";
 import {useNavigate} from "react-router-dom";
 import useConfirm from "../../hooks/useConfirm";
+import axios from "axios";
+import {useApiMutation} from "../../hooks/useApiMutation";
+
+const createQuizRequest = async ({ jsonData, thumbnailFile }) => {
+    const formData = new FormData();
+    console.log(jsonData)
+    formData.append('request', new Blob([JSON.stringify(jsonData)], { type: 'application/json' }));
+    formData.append('thumbnail', thumbnailFile); // 이미지 파일
+    const response = await axios.post('/quizzes', formData, {
+        headers: {
+            'Content-Type': 'multipart/form-data',
+        },
+    });
+    return response.data;
+}
 
 const CreateQuiz = () => {
     const [quizImageFile, setQuizImageFile] = useState(null);
@@ -15,42 +34,102 @@ const CreateQuiz = () => {
     const navigate = useNavigate();
     const { openConfirm } = useConfirm();
     const [items, setItems] = useState([
-        { input1: '', input2: '' },
-        { input1: '', input2: '' },
-        { input1: '', input2: '' },
-        { input1: '', input2: '' },
-        { input1: '', input2: '' },
-        { input1: '', input2: '' },
-        { input1: '', input2: '' },
-        { input1: '', input2: '' },
-        { input1: '', input2: '' },
-        { input1: '', input2: '' },
+        { content: '', answer: '' },
+        { content: '', answer: '' },
+        { content: '', answer: '' },
+        { content: '', answer: '' },
+        { content: '', answer: '' },
+        { content: '', answer: '' },
+        { content: '', answer: '' },
+        { content: '', answer: '' },
+        { content: '', answer: '' },
+        { content: '', answer: '' },
     ]);
 
-    const handleChange = (index, field, value) => {
+    const { mutate: createQuizMutate } = useApiMutation(createQuizRequest, {
+        onSuccess: (data) => {
+            console.log('퀴즈 생성 성공:', data);
+            openConfirm({
+                title: '저장이 완료되었습니다.',
+                callback: () => navigate('/quiz'),
+                showCancelButton: false
+            })
+        },
+    });
+
+    const handleQuizItemChange = (index, field, value) => {
         const newItems = [...items];
         newItems[index][field] = value;
         setItems(newItems);
     };
 
-    const handleAdd = () => {
-        setItems([...items, { input1: '', input2: '' }]);
+    const handleQuizItemAdd = () => {
+        setItems([...items, { content: '', answer: '' }]);
     };
 
-    const handleRemove = (index) => {
+    const handleQuizItemRemove = (index) => {
         setItems(items.filter((_, i) => i !== index));
     };
 
     const isAllInputsFilled = items.length >= 10 && items.every(
-        (item) => item.input1.trim() !== '' && item.input2.trim() !== ''
+        (item) => item.content.trim() !== '' && item.answer.trim() !== ''
     );
 
     const handleSaveClick = () => {
-        openConfirm({
-            title: '저장이 완료되었습니다.',
-            callback: () => navigate('/quiz'),
-            showCancelButton: false
-        })
+        // 공백 제거된 문자열 기준
+        const trimmedTitle = quizTitle.trim();
+        const trimmedDescription = quizDescription.trim();
+
+        // 제목 길이 확인
+        if (trimmedTitle.length < 2 || trimmedTitle.length > 30) {
+            openConfirm({title: '제목은 공백 제외 2~30자 사이여야 합니다.'});
+            return;
+        }
+
+        // 설명 길이 확인
+        if (trimmedDescription.length < 10 || trimmedDescription.length > 50) {
+            openConfirm({title: '설명은 공백 제외 10~50자 사이여야 합니다.'});
+            return;
+        }
+
+        // 퀴즈 수 확인
+        if (items.length < 10 || items.length > 80) {
+            openConfirm({title: '퀴즈는 최소 10개, 최대 80개까지 등록할 수 있습니다.'});
+            return;
+        }
+
+        // 각 문제의 길이와 정답 길이 확인
+        for (let i = 0; i < items.length; i++) {
+            const { content, answer } = items[i];
+            const trimmedContent = content.trim();
+            const trimmedAnswer = answer.trim();
+
+            if (trimmedContent.length < 5 || trimmedContent.length > 30) {
+                openConfirm({title: `문제 ${i + 1}의 내용은 공백 제외 5~30자 사이여야 합니다.`});
+                return;
+            }
+
+            if (trimmedAnswer.length < 1 || trimmedAnswer.length > 30) {
+                openConfirm({title: `문제 ${i + 1}의 정답은 공백 제외 1~30자 사이여야 합니다.`});
+                return;
+            }
+        }
+
+        // 모든 조건 통과 시 API 호출
+        const jsonData = {
+            title: trimmedTitle,
+            quizType: 'TEXT',
+            description: trimmedDescription,
+            questions: items.map(({ content, answer }) => ({
+                content: content.trim(),
+                answer: answer.trim(),
+            })),
+        };
+
+        createQuizMutate({
+            jsonData,
+            thumbnailFile: quizImageFile
+        });
     }
 
     const f1Styles = {
@@ -307,10 +386,10 @@ const CreateQuiz = () => {
                                         <QuizItem
                                             key={index}
                                             index={index}
-                                            input1={item.input1}
-                                            input2={item.input2}
-                                            onChange={handleChange}
-                                            onRemove={handleRemove}
+                                            content={item.content}
+                                            answer={item.answer}
+                                            onChange={handleQuizItemChange}
+                                            onRemove={handleQuizItemRemove}
                                         />
                                     ))}
                                 </Stack>
@@ -321,7 +400,7 @@ const CreateQuiz = () => {
                                 <div className="d-flex justify-content-center mb-3">
                                     <Button 
                                         style={f1Styles.secondaryButton}
-                                        onClick={handleAdd} 
+                                        onClick={handleQuizItemAdd}
                                         disabled={items.length >= 80}
                                         onMouseEnter={(e) => {
                                             e.target.style.backgroundColor = '#38384a';

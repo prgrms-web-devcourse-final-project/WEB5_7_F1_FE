@@ -4,7 +4,7 @@ import {useEffect, useState} from "react"
 import { MessageCircle, Send, Car, Bell } from "lucide-react"
 import {useRecoilState, useRecoilValue} from "recoil";
 import {
-    chatAtom,
+    chatAtom, loginUserAtom,
     playerListAtom,
     stompSendMessageAtom, systemNoticeAtom
 } from "../../../state/atoms";
@@ -18,6 +18,7 @@ function ChatSection() {
     const [newChat, setNewChat] = useRecoilState(chatAtom); // 단일 채팅 수신
     const [newNotice, setNewNotice] = useRecoilState(systemNoticeAtom); // 단일 채팅 수신
     const playerList = useRecoilValue(playerListAtom);
+    const loginUser = useRecoilValue(loginUserAtom);
 
     // 닉네임 → color 매핑 함수
     const getColorByNickname = (nickname) => {
@@ -42,9 +43,9 @@ function ChatSection() {
           const chatPayload = {
               type: "CHAT",
               message: {
-                  nickname: "shson",
-                  message: "와 이 문제 너무 어렵다!",
-                  timestamp: "2025-07-04T20:16:10Z",
+                  nickname: loginUser.name,
+                  message: chatMessage,
+                  timestamp: new Date().toISOString().split('.')[0] + 'Z',
               },
           };
           sendMessage(`/pub/room/chat/${roomId}`, JSON.stringify(chatPayload));

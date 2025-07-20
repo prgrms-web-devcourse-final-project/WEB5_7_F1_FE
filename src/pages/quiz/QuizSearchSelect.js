@@ -1,12 +1,13 @@
-import ThemedSelect from "../../shared/ThemedSelect";
+import Select from "react-select";
 
-const QuizSearchSelect = ({ options, value, handleSearchTypeChange }) => {
+const QuizSearchSelect = ({ options, value, onChange }) => {
     return (
-        <ThemedSelect
+        <Select
             options={options}
             value={value}
-            onChange={handleSearchTypeChange}
+            onChange={onChange}
             placeholder="검색 타입"
+            className="w-[140px]"
             styles={{
                 control: (provided, state) => ({
                     ...provided,

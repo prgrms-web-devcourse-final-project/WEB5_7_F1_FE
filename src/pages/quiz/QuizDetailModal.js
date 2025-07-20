@@ -1,11 +1,26 @@
 import {Button, Modal, Stack, Image} from "react-bootstrap";
 import {useNavigate} from "react-router-dom";
 import useConfirm from "../../hooks/useConfirm";
+import {useApiMutation} from "../../hooks/useApiMutation";
+import axios from "axios";
+
+const deleteQuizRequest = async (quizId) => {
+    return  await axios.delete(`/quizzes/${quizId}`);
+}
 
 const QuizDetailModal = ({ isOpen, onClose, quiz }) => {
     const navigate = useNavigate();
     const { openConfirm } = useConfirm();
-
+    const { mutate: deleteQuizMutate } = useApiMutation(deleteQuizRequest, {
+        invalidateKeys: [['quizList']],
+        onSuccess: () => {
+            openConfirm({
+                title: '삭제가 완료되었습니다.',
+                callback: () => onClose(),
+                showCancelButton: false
+            })
+        },
+    });
     const handleDeleteQuizClick = () => {
         openConfirm({
             title: <>
@@ -13,7 +28,7 @@ const QuizDetailModal = ({ isOpen, onClose, quiz }) => {
                     <br />
                     한 번 삭제하면 복구할 수 없습니다.
                 </>,
-            callback: () => {}
+            callback: () => deleteQuizMutate(quiz.quizId)
         })
     }
 
@@ -81,7 +96,7 @@ const QuizDetailModal = ({ isOpen, onClose, quiz }) => {
             
             <Modal.Footer className="border-0 d-flex justify-content-between align-items-center pt-2">
                 <span className="text-dark">
-                    퀴즈 제작자 : {quiz.creatorName}
+                    퀴즈 제작자 : {quiz.creatorNickname}
                 </span>
                 <Stack direction="horizontal" gap={3}>
                     <Button 

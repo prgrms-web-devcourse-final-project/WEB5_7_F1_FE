@@ -1,7 +1,7 @@
 import {Badge, Col, Form, Row} from "react-bootstrap";
 import styles from './quiz.module.scss'
 
-const QuizItem = ({ index, input1, input2, onChange, onRemove }) => {
+const QuizItem = ({ index, content, answer, onChange, onRemove }) => {
     return (
         <Row className={"m-2"}>
             <Col md={1} className={"d-flex align-items-center"}>
@@ -13,8 +13,8 @@ const QuizItem = ({ index, input1, input2, onChange, onRemove }) => {
                         required
                         type="text"
                         placeholder="문제를 입력하세요"
-                        value={input1}
-                        onChange={(e) => onChange(index, 'input1', e.target.value)}
+                        value={content}
+                        onChange={(e) => onChange(index, 'content', e.target.value)}
                     />
                 </Form>
             </Col>
@@ -23,8 +23,8 @@ const QuizItem = ({ index, input1, input2, onChange, onRemove }) => {
                     <Form.Control
                         type="text"
                         placeholder="정답을 입력하세요"
-                        value={input2}
-                        onChange={(e) => onChange(index, 'input2', e.target.value)}
+                        value={answer}
+                        onChange={(e) => onChange(index, 'answer', e.target.value)}
                     />
                 </Form>
             </Col>

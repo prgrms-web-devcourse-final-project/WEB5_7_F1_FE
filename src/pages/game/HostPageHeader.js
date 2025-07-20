@@ -11,7 +11,7 @@ const HostPageHeader = ({ handleExitRoomClick }) => {
                 <div className="flex items-center space-x-4">
                     <div className="flex items-center space-x-2">
                         <Flag className="w-6 h-6" />
-                        <h1 className="text-xl font-bold">{roomSetting.roomName}</h1>
+                        <h1 className="text-xl font-bold">{roomSetting?.roomName}</h1>
                     </div>
                     <div className="flex items-center space-x-2 bg-white/20 px-3 py-1 rounded-full">
                         <Lock className="w-4 h-4" />
@@ -21,7 +21,7 @@ const HostPageHeader = ({ handleExitRoomClick }) => {
                 <div className="flex items-center space-x-4">
                     <div className="flex items-center space-x-2">
                         <Users className="w-5 h-5" />
-                        <span className="font-semibold">{roomSetting.currentUserCount}/{roomSetting.maxUserCount} 플레이어</span>
+                        <span className="font-semibold">{roomSetting?.currentUserCount}/{roomSetting?.maxUserCount} 플레이어</span>
                     </div>
                     <div className="bg-yellow-500/20 px-3 py-1 rounded-full">
                         <span className="text-sm font-medium">👑 방장</span>

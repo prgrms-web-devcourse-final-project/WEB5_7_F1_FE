@@ -5,6 +5,9 @@ import styles from "./Layout.module.scss"
 import axios from "axios";
 import {useApiQuery} from "../../hooks/useApiQuery";
 import {useApiMutation} from "../../hooks/useApiMutation";
+import {useSetRecoilState} from "recoil";
+import {loginUserAtom} from "../../state/atoms";
+import {useEffect} from "react";
 
 const authMeRequest = async () => {
     const response = await axios.get(`/auth/me`);
@@ -21,6 +24,7 @@ const Layout = () => {
     const path = location.pathname;
     const navigate = useNavigate();
     const isActive = (target) => path.startsWith(target);
+    const setLoginUser = useSetRecoilState(loginUserAtom);
 
     const f1Styles = {
         header: {
@@ -123,6 +127,12 @@ const Layout = () => {
         ["authme"],
         () => authMeRequest(),
     );
+
+    useEffect(() => {
+        if (data) {
+            setLoginUser(data);
+        }
+    }, [data])
 
     const { mutate: logoutMutate } = useApiMutation(logoutRequest, {
         onSuccess: () => {

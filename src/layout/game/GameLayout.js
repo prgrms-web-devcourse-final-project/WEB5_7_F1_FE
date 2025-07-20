@@ -3,12 +3,14 @@ import Sidebar from "./Sidebar";
 import {useSetRecoilState} from "recoil";
 import {
     chatAtom,
-    gameSettingAtom,
+    gameSettingAtom, loginUserAtom,
     playerListAtom,
     roomSettingAtom, stompSendMessageAtom, systemNoticeAtom
 } from "../../state/atoms";
 import useStompClient from "../../hooks/useStompClient";
 import {useCallback, useEffect} from "react";
+import {useApiQuery} from "../../hooks/useApiQuery";
+import axios from "axios";
 
 const PLAYER_COLORS = [
     "text-red-600",
@@ -21,6 +23,11 @@ const PLAYER_COLORS = [
     "text-pink-600",
 ];
 
+const authMeRequest = async () => {
+    const response = await axios.get(`/auth/me`);
+    return response.data;
+};
+
 const GameLayout = () => {
     const { id: roomId } = useParams();
     const setPlayerList = useSetRecoilState(playerListAtom);
@@ -29,7 +36,18 @@ const GameLayout = () => {
     const setChat = useSetRecoilState(chatAtom);
     const setSystemNotice = useSetRecoilState(systemNoticeAtom);
     const setSendMessage = useSetRecoilState(stompSendMessageAtom);
-    const navigate = useNavigate();
+    const setLoginUser = useSetRecoilState(loginUserAtom);
+
+    const { isLoading, data } = useApiQuery(
+        ["authme"],
+        () => authMeRequest(),
+    );
+
+    useEffect(() => {
+        if (data) {
+            setLoginUser(data);
+        }
+    }, [data])
 
     // 메시지를 처리하는 콜백
     const handleStompMessage = useCallback((payload) => {
@@ -66,18 +84,16 @@ const GameLayout = () => {
             default:
                 console.warn("알 수 없는 메시지", payload);
         }
-    }, [setPlayerList, setRoomSetting, setGameSetting, setChat]);
+    }, [setPlayerList, setRoomSetting, setGameSetting, setSystemNotice, setChat]);
 
     const { sendMessage } = useStompClient(roomId, handleStompMessage);
-    useEffect(() => {
-        setSendMessage(() => sendMessage);
-    }, [sendMessage]);
 
     useEffect(() => {
+        console.log('📦 sendMessage:', sendMessage);
         if (sendMessage) {
-            sendMessage(`/pub/room/initializeRoomSocket/${roomId}`, "");
+            setSendMessage(() => sendMessage); // Recoil 전역 등록
         }
-    }, [sendMessage, roomId]);
+    }, [sendMessage]);
 
     return (
         <div className="d-flex flex-column vh-100">

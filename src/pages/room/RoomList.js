@@ -61,7 +61,6 @@ const RoomList = () => {
 
   useEffect(() => {
     if (data) {
-      console.log(rooms);
       setRooms(data.rooms)
       setFilteredRooms(data.rooms)
     }

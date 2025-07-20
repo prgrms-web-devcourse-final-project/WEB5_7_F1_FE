@@ -1,62 +1,105 @@
-import { useEffect, useRef } from "react";
-import { Client } from "@stomp/stompjs";
+// useStompClient.js
+import { useEffect, useRef, useMemo, useState } from 'react';
+import { Client } from '@stomp/stompjs';
+
+// 싱글톤 관리 변수
+let stompClient = null;
+let isConnected = false;
+let isConnecting = false;
 
 export default function useStompClient(roomId, onMessage) {
-    const stompClientRef = useRef(null);
-    const hasSubscribedRef = useRef(false);
+    const [ready, setReady] = useState(false);
+    const [activeSendMessage, setActiveSendMessage] = useState(null); // 연결 완료 후 세팅될 함수
+    const onMessageRef = useRef(onMessage);
+    const hasInitializedRoomRef = useRef(false); // ✅ 방 초기화 메시지 중복 방지용
+
+    // 최신 onMessage 핸들러 유지
     useEffect(() => {
-        const stompClient = new Client({
-            brokerURL: `wss://brainrace.duckdns.org:7080/ws/game-room`,
+        onMessageRef.current = onMessage;
+    }, [onMessage]);
+
+    // 최초 1번만 커넥션 시도
+    useEffect(() => {
+        if (isConnected || isConnecting) return;
+
+        isConnecting = true;
+
+        stompClient = new Client({
+            brokerURL: 'wss://brainrace.duckdns.org:7080/ws/game-room',
             reconnectDelay: 5000,
+            debug: (msg) => console.log('[STOMP]', msg),
             onConnect: () => {
-                console.log("🔌 STOMP connected");
-                // 구독
-                if (!hasSubscribedRef.current) {
-                    hasSubscribedRef.current = true;
-                    stompClient.subscribe(`/sub/room/${roomId}`, (message) => {
-                        const payload = JSON.parse(message.body);
-                        console.log("📥 메시지 수신:", payload);
-
-                        // 👉 외부에서 전달한 콜백 실행
-                        if (onMessage) onMessage(payload);
-                    });
-
-                    // ✅ 자동으로 방 입장 메시지 퍼블리시
-                    stompClient.publish({
-                        destination: `/pub/room/initializeRoomSocket/${roomId}`,
-                        body: "", // 빈 body 명시적 전달
-                    });
-                } //if (!hasSubscribedRef.current) { end
-            }, //onConnect end
+                console.log('✅ STOMP 연결됨');
+                isConnected = true;
+                isConnecting = false;
+                setReady(true);
+            },
             onStompError: (frame) => {
-                console.error("❌ STOMP error", frame);
+                console.error('❌ STOMP 에러:', frame.headers['message']);
+            },
+            onDisconnect: () => {
+                console.log('🔌 STOMP 연결 종료');
+                isConnected = false;
+                isConnecting = false;
+                setReady(false);
+                setActiveSendMessage(null);
+                hasInitializedRoomRef.current = false;
             },
         });
 
         stompClient.activate();
-        stompClientRef.current = stompClient;
+    }, []);
+
+    // roomId 변경 시 구독 (연결 완료 후)
+    useEffect(() => {
+        if (!stompClient || !isConnected || !roomId) return;
+
+        console.log(`📥 구독 시작: /sub/room/${roomId}`);
+
+        const subscription = stompClient.subscribe(`/sub/room/${roomId}`, (message) => {
+            try {
+                const payload = JSON.parse(message.body);
+                onMessageRef.current?.(payload);
+            } catch (err) {
+                console.error('❌ 메시지 파싱 실패:', err);
+            }
+        });
 
         return () => {
-            if (stompClientRef.current?.connected) {
-                stompClientRef.current.deactivate();
-                console.log("🔌 STOMP disconnected");
-            }
-            hasSubscribedRef.current = false;
+            subscription.unsubscribe();
+            console.log(`📤 구독 해제: /sub/room/${roomId}`);
         };
-    }, [roomId, onMessage]);
+    }, [roomId, ready]);
 
-    // ✅ 메시지 전송 함수 반환
-    const sendMessage = (destination, body) => {
-        console.log("sendMessage: ", destination, body, stompClientRef.current?.connected)
-        if (stompClientRef.current?.connected) {
-            stompClientRef.current.publish({
+    // 연결이 완료되면 sendMessage 생성
+    useEffect(() => {
+        if (!isConnected || !stompClient) return;
+
+        const sendFn = (destination, body) => {
+            stompClient.publish({
                 destination,
-                body,
+                body: typeof body === 'string' ? body : JSON.stringify(body),
             });
-        } else {
-            console.warn("STOMP 연결되지 않음");
-        }
-    };
+        };
 
-    return {sendMessage};
+        setActiveSendMessage(() => sendFn);
+    }, [ready]);
+
+    // ✅ 최초 1회 initializeRoomSocket 퍼블리시
+    useEffect(() => {
+        if (!isConnected || !stompClient || !roomId || hasInitializedRoomRef.current === true) return;
+
+        stompClient.publish({
+            destination: `/pub/room/initializeRoomSocket/${roomId}`,
+            body: '',
+        });
+
+        hasInitializedRoomRef.current = true;
+        console.log(`🚀 초기화 메시지 전송됨: /pub/room/initializeRoomSocket/${roomId}`);
+    }, [roomId, ready]);
+
+    return {
+        sendMessage: activeSendMessage, // 처음엔 null, 연결 완료되면 함수
+        ready,
+    };
 }

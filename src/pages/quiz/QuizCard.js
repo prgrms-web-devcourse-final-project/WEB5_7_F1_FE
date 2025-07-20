@@ -3,6 +3,7 @@ import {Image, Stack} from "react-bootstrap";
 import sample from '../../assets/images/sample.png';
 
 const QuizCard = ({ quiz, onClick }) => {
+    console.log(quiz)
     return (
         <div 
             className={`${styles.quizCard} position-relative`} 
@@ -56,7 +57,7 @@ const QuizCard = ({ quiz, onClick }) => {
                     }}
                 >
                     <Image 
-                        src={sample} 
+                        src={quiz?.thumbnailUrl}
                         alt="퀴즈 이미지"
                         style={{
                             width: '100%',
@@ -110,10 +111,10 @@ const QuizCard = ({ quiz, onClick }) => {
                     }}
                 >
                     <span>
-                        <strong>제작자:</strong> {quiz?.creator || '닉네임'}
+                        <strong>제작자:</strong> {quiz?.creatorNickname || '닉네임'}
                     </span>
                     <span>
-                        <strong>총 {quiz?.totalQuestions || 80}문제</strong>
+                        <strong>총 {quiz?.numberOfQuestion || 80}문제</strong>
                     </span>
                 </Stack>
             </div>
