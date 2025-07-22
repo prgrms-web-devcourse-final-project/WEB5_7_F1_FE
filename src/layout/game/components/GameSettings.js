@@ -1,15 +1,14 @@
-import { useState } from "react"
-import { useNavigate } from "react-router-dom"
-import { Settings } from "lucide-react"
+import {useState} from "react"
+import {useNavigate} from "react-router-dom"
+import {Settings} from "lucide-react"
 import QuizSelectModal from "../../../pages/game/QuizSelectModal";
 import {useRecoilValue} from "recoil";
 import {stompSendMessageAtom} from "../../../state/atoms";
 
-function GameSettings({ roomId }) {
-  const [timePerQuestion, setTimePerQuestion] = useState("30초");
-  const [questionCount, setQuestionCount] = useState(25);
+function GameSettings({ roomId, gameSetting, allReady }) {
+  const [timePerQuestion, setTimePerQuestion] = useState(60);
+  const [questionCount, setQuestionCount] = useState(gameSetting?.quiz.numberOfQuestion);
   const [quizSelectModalOpen, setQuizSelectModalOpen] = useState(false);
-  const [selectedQuiz, setSelectedQuiz] = useState(null);
   const navigate = useNavigate();
   const sendMessage = useRecoilValue(stompSendMessageAtom);
 
@@ -19,8 +18,35 @@ function GameSettings({ roomId }) {
   }
 
   const handleQuizSelect = (quiz) => {
-    setSelectedQuiz(quiz);
+    const quizChangeMessage = {
+      "message" : {
+        "quizId" : quiz.quizId,
+      }
+    }
+    sendMessage(`/room/quiz/${roomId}`, quizChangeMessage);
   }
+
+  const handleTimePerQuestionChange = (e) => {
+    console.log('handleTimePerQuestionChange: ', e.target.value)
+    setTimePerQuestion(e.target.value);
+    const timePerQuestionMessage = {
+      "message" : {
+        "timeLimit" : e.target.value
+      }
+    }
+    sendMessage(`/room/time-limit/${roomId}`, timePerQuestionMessage);
+  };
+
+  const handleQuestionCountChange = (e) => {
+    console.log('handleQuestionCountChange: ', e.target.value)
+    setQuestionCount(e.target.value);
+    const questionCountMessage = {
+      "message" : {
+        "round" : e.target.value
+      }
+    }
+    sendMessage(`/room/round/${roomId}`, questionCountMessage);
+  };
 
   return (
       <>
@@ -44,7 +70,7 @@ function GameSettings({ roomId }) {
                 <label className="block text-sm font-medium text-gray-700 mb-2">제한 시간</label>
                 <select
                     value={timePerQuestion}
-                    onChange={(e) => setTimePerQuestion(e.target.value)}
+                    onChange={handleTimePerQuestionChange}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 appearance-none bg-white bg-no-repeat bg-right pr-8"
                     style={{
                       backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' strokeLinecap='round' strokeLinejoin='round' strokeWidth='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e")`,
@@ -52,30 +78,39 @@ function GameSettings({ roomId }) {
                       backgroundSize: "1.5em 1.5em",
                     }}
                 >
-                  <option>15초</option>
-                  <option>30초</option>
-                  <option>45초</option>
-                  <option>60초</option>
+                  <option value={15}>15초</option>
+                  <option value={30}>30초</option>
+                  <option value={45}>45초</option>
+                  <option value={60}>60초</option>
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">문제 수</label>
-                <input
-                    type="number"
-                    min="10"
-                    max="80"
+                <label className="block text-sm font-medium text-gray-700 mb-2">라운드</label>
+                <select
                     value={questionCount}
-                    onChange={(e) => setQuestionCount(Number.parseInt(e.target.value) || 30)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                    placeholder="문제 수를 입력하세요 (10-80)"
-                />
+                    onChange={handleQuestionCountChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 appearance-none bg-white bg-no-repeat bg-right pr-8"
+                    style={{
+                      backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' strokeLinecap='round' strokeLinejoin='round' strokeWidth='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e")`,
+                      backgroundPosition: "right 0.5rem center",
+                      backgroundSize: "1.5em 1.5em",
+                    }}
+                >
+                  {Array.from({ length: gameSetting?.quiz.numberOfQuestion - 9 }, (_, i) => {
+                    const value = i + 10;
+                    return (
+                        <option key={value} value={value}>
+                          {value}
+                        </option>
+                    );
+                  })}
+                </select>
               </div>
             </div>
             <div className="pt-4">
-              <button
-                  onClick={handleStartGame}
-                  disabled={!selectedQuiz}
-                  className="w-full px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-semibold disabled:bg-gray-400 disabled:cursor-not-allowed"
+              <button onClick={handleStartGame}
+                      disabled={!allReady}
+                      className="w-full px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-semibold disabled:bg-gray-400 disabled:cursor-not-allowed"
               >
                 게임 시작
               </button>

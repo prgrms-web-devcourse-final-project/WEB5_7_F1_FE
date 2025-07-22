@@ -56,3 +56,28 @@ export const systemNoticeAtom = atom({
     key: 'systemNotice',
     default: null,
 });
+
+export const questionsAtom = atom({
+    key: 'questions',
+    default: null,
+});
+
+export const questionStartAtom = atom({
+    key: 'questionStart',
+    default: null,
+});
+
+export const questionResultAtom = atom({
+    key: 'questionResult',
+    default: null,
+});
+
+export const rankUpdateAtom = atom({
+    key: 'rankUpdate',
+    default: null,
+});
+
+export const gameResultAtom = atom({
+    key: 'gameResult',
+    default: null,
+});

@@ -2,10 +2,17 @@ import {Outlet, useNavigate, useParams} from "react-router-dom";
 import Sidebar from "./Sidebar";
 import {useSetRecoilState} from "recoil";
 import {
-    chatAtom,
-    gameSettingAtom, loginUserAtom,
+    chatAtom, gameResultAtom,
+    gameSettingAtom,
+    loginUserAtom,
     playerListAtom,
-    roomSettingAtom, stompSendMessageAtom, systemNoticeAtom
+    questionResultAtom,
+    questionsAtom,
+    questionStartAtom,
+    rankUpdateAtom,
+    roomSettingAtom,
+    stompSendMessageAtom,
+    systemNoticeAtom
 } from "../../state/atoms";
 import useStompClient from "../../hooks/useStompClient";
 import {useCallback, useEffect} from "react";
@@ -34,9 +41,15 @@ const GameLayout = () => {
     const setRoomSetting = useSetRecoilState(roomSettingAtom);
     const setGameSetting = useSetRecoilState(gameSettingAtom);
     const setChat = useSetRecoilState(chatAtom);
+    const setQuestions = useSetRecoilState(questionsAtom);
+    const setQuestionStart = useSetRecoilState(questionStartAtom);
+    const setQuestionResult = useSetRecoilState(questionResultAtom);
+    const setRankUpdate = useSetRecoilState(rankUpdateAtom);
+    const setGameResult = useSetRecoilState(gameResultAtom);
     const setSystemNotice = useSetRecoilState(systemNoticeAtom);
     const setSendMessage = useSetRecoilState(stompSendMessageAtom);
     const setLoginUser = useSetRecoilState(loginUserAtom);
+    const navigate = useNavigate();
 
     const { isLoading, data } = useApiQuery(
         ["authme"],
@@ -51,6 +64,7 @@ const GameLayout = () => {
 
     // 메시지를 처리하는 콜백
     const handleStompMessage = useCallback((payload) => {
+        console.log('receive message: ', payload)
         switch (payload.type) {
             case "PLAYER_LIST":
                 const { host, players } = payload.message;
@@ -80,6 +94,24 @@ const GameLayout = () => {
                 break;
             case "CHAT":
                 setChat(payload.message);
+                break;
+            case "GAME_START":
+                setQuestions(payload.message);
+                break;
+            case "QUESTION_START":
+                setQuestionStart(payload.message);
+                break;
+            case "QUESTION_RESULT":
+                setQuestionResult(payload.message);
+                break;
+            case "RANK_UPDATE":
+                setRankUpdate(payload.message.rank);
+                break;
+            case "GAME_RESULT":
+                setGameResult(payload.message.result);
+                break;
+            case "EXIT_SUCCESS":
+                navigate("/room");
                 break;
             default:
                 console.warn("알 수 없는 메시지", payload);

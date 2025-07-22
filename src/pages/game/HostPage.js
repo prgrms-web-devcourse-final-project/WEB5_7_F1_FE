@@ -2,27 +2,66 @@ import {useNavigate, useParams} from "react-router-dom"
 import QuizInfoCard from "../../layout/game/components/QuizInfoCard"
 import GameSettings from "../../layout/game/components/GameSettings"
 import {useRecoilValue} from "recoil";
-import {stompSendMessageAtom} from "../../state/atoms";
+import {
+  gameSettingAtom,
+  loginUserAtom,
+  playerListAtom,
+  roomSettingAtom,
+  stompSendMessageAtom
+} from "../../state/atoms";
 import HostPageHeader from "./HostPageHeader";
+import {useEffect, useState} from "react";
+import clsx from "clsx";
 
 function HostPage() {
   const { id: roomId } = useParams();
   const navigate = useNavigate();
+  const [isReady, setReady] = useState(false);
   const sendMessage = useRecoilValue(stompSendMessageAtom);
+  const gameSetting = useRecoilValue(gameSettingAtom);
+  console.log(gameSetting);
+
+  //현재 로그인 유저를 찾고 방장인지 확인
+  const playerList = useRecoilValue(playerListAtom);
+  const loginUser = useRecoilValue(loginUserAtom);
+  const matchingPlayers = playerList.filter(player => player.nickname === loginUser.name);
+  const isHost = matchingPlayers.some(player => player.status === "host");
+  const allReady = playerList.every(player => player.ready);
+
+  useEffect(() => {
+    if (playerList) {
+      setReady(matchingPlayers.ready);
+    }
+  }, [playerList])
 
   const handleExitRoomClick = () => {
     sendMessage(`/pub/room/exit/${roomId}`, "");
-    navigate("/room");
   };
+
+  const handleReadyGame = () => {
+    // setReady(prev => !prev);
+    sendMessage(`/pub/room/ready/${roomId}`, "");
+  }
 
   return (
     <div className="flex flex-col h-full" style={{ height: "90vh" }}>
-      <HostPageHeader handleExitRoomClick={handleExitRoomClick}/>
+      <HostPageHeader isHost={isHost} handleExitRoomClick={handleExitRoomClick}/>
       {/* Body */}
       <div className="flex-1 p-8">
         <div className="max-w-6xl mx-auto">
-          <QuizInfoCard />
-          <GameSettings isHost={true} roomId={roomId} />
+          <QuizInfoCard gameSetting={gameSetting} />
+          {isHost ? <GameSettings roomId={roomId} gameSetting={gameSetting} allReady={allReady}/> :
+            <button onClick={handleReadyGame}
+                    className={clsx(
+                        "w-full px-6 py-3 text-white rounded-lg transition-colors font-semibold disabled:bg-gray-400 disabled:cursor-not-allowed",
+                        {
+                          "bg-green-600 hover:bg-green-700": !isReady,
+                          "bg-red-600 hover:bg-red-700": isReady
+                        }
+                    )}>
+              {isReady ? '준비 완료 상태입니다.다시 클릭하면 준비 해제됩니다.' : '준비'}
+            </button>
+          }
         </div>
       </div>
     </div>

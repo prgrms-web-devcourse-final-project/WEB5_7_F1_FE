@@ -88,11 +88,22 @@ export default function useStompClient(roomId, onMessage) {
     // ✅ 최초 1회 initializeRoomSocket 퍼블리시
     useEffect(() => {
         if (!isConnected || !stompClient || !roomId || hasInitializedRoomRef.current === true) return;
-
-        stompClient.publish({
-            destination: `/pub/room/initializeRoomSocket/${roomId}`,
-            body: '',
-        });
+        const localKey = `enteredRoom_${roomId}`;
+        const hasEnteredBefore = localStorage.getItem(localKey);
+        if (hasEnteredBefore) {
+            // 재접속 또는 새로고침
+            stompClient.publish({
+                destination: `/pub/room/reconnect/${roomId}`,
+                body: '',
+            });
+        } else {
+            // 첫 입장
+            stompClient.publish({
+                destination: `/pub/room/initializeRoomSocket/${roomId}`,
+                body: '',
+            });
+            localStorage.setItem(localKey, 'true'); //방 목록에서 제거됨
+        }
 
         hasInitializedRoomRef.current = true;
         console.log(`🚀 초기화 메시지 전송됨: /pub/room/initializeRoomSocket/${roomId}`);

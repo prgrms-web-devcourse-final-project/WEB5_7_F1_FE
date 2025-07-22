@@ -67,6 +67,15 @@ const RoomList = () => {
     }
   }, [data])
 
+  useEffect(() => {
+    // prefix로 저장된 방 관련 키들 삭제
+    Object.keys(localStorage).forEach((key) => {
+      if (key.startsWith("enteredRoom_")) {
+        localStorage.removeItem(key);
+      }
+    });
+  }, []);
+
   const handleSearch = () => {
     const filtered = rooms.filter((room) => room.roomName.toLowerCase().includes(searchTerm.toLowerCase()));
     setFilteredRooms(filtered);

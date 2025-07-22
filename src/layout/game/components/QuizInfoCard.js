@@ -2,8 +2,7 @@ import { MessageCircleQuestion, Clock, List } from "lucide-react"
 import {useRecoilValue} from "recoil";
 import {gameSettingAtom} from "../../../state/atoms";
 
-function QuizInfoCard() {
-  const gameSetting = useRecoilValue(gameSettingAtom);
+function QuizInfoCard({ gameSetting }) {
   return (
     <div className="bg-white rounded-2xl shadow-lg p-8 mb-6">
       <div className="flex items-center mb-6">
@@ -49,9 +48,9 @@ function QuizInfoCard() {
             <div className="bg-purple-50 rounded-lg p-3">
               <div className="flex items-center space-x-2">
                 <List className="w-4 h-4 text-purple-600" />
-                <span className="text-sm font-medium text-purple-900">문제 수</span>
+                <span className="text-sm font-medium text-purple-900">라운드</span>
               </div>
-              <div className="text-lg font-bold text-purple-700">30개</div>
+              <div className="text-lg font-bold text-purple-700">{gameSetting?.round}개</div>
             </div>
           </div>
         </div>
