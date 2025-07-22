@@ -28,14 +28,15 @@ const enterRoomRequest = async (params) => {
 }
 
 const RoomList = () => {
-  const [searchTerm, setSearchTerm] = useState("")
-  const [currentPage, setCurrentPage] = useState(1)
-  const [rooms, setRooms] = useState([])
-  const [filteredRooms, setFilteredRooms] = useState([])
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  const [isFullModalOpen, setIsFullModalOpen] = useState(false)
-  const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false)
-  const [selectedRoom, setSelectedRoom] = useState(null)
+  const [searchTerm, setSearchTerm] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [rooms, setRooms] = useState([]);
+  const [filteredRooms, setFilteredRooms] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isFullModalOpen, setIsFullModalOpen] = useState(false);
+  const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
+  const [selectedRoom, setSelectedRoom] = useState(null);
+  const [searchOn, setSearchOn] = useState(false);
   const navigate = useNavigate();
   const ROOMS_PER_PAGE = 8 // 한 페이지당 8개
 
@@ -61,17 +62,24 @@ const RoomList = () => {
 
   useEffect(() => {
     if (data) {
-      setRooms(data.rooms)
-      setFilteredRooms(data.rooms)
+      setRooms(data.rooms);
+      setFilteredRooms(data.rooms);
     }
   }, [data])
 
   const handleSearch = () => {
-    // 검색 로직 구현
-    const filtered = rooms.filter((room) => room.title.toLowerCase().includes(searchTerm.toLowerCase()))
-    setFilteredRooms(filtered)
-    setCurrentPage(1) // 검색 시 첫 페이지로 이동
+    const filtered = rooms.filter((room) => room.roomName.toLowerCase().includes(searchTerm.toLowerCase()));
+    setFilteredRooms(filtered);
+    setCurrentPage(1); // 검색 시 첫 페이지로 이동
+    setSearchOn(true);
   }
+
+  const handleReset = () => {
+    setSearchTerm('');
+    setFilteredRooms(rooms);
+    setCurrentPage(1); // 검색 시 첫 페이지로 이동
+    setSearchOn(false);
+  };
 
   const handleCreateRoom = (newRoomData) => {
     createRoomMutate(newRoomData);
@@ -89,10 +97,6 @@ const RoomList = () => {
 
   const handlePasswordSubmit = (room, password) => {
     enterRoomMutate({ roomId: room.roomId, password: password });
-  }
-
-  const handlePageChange = (page) => {
-    setCurrentPage(page)
   }
 
   const handleKeyPress = (e) => {
@@ -117,14 +121,24 @@ const RoomList = () => {
         {/* Search Section */}
         <section className={styles.searchSection}>
           <div className={styles.searchInputGroup}>
-            <input
-              type="text"
-              className={styles.searchInput}
-              placeholder="방 제목을 입력하세요..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              onKeyPress={handleKeyPress}
-            />
+            <div className={styles.searchInputWrapper}>
+              <input
+                  type="text"
+                  className={styles.searchInput}
+                  placeholder="방 제목을 입력하세요..."
+                  value={searchTerm}
+                  onChange={(e) => {
+                    setSearchTerm(e.target.value);
+                    setSearchOn(false);
+                  }}
+                  onKeyPress={handleKeyPress}
+              />
+              {searchTerm && (
+                  <button className={styles.clearButton} onClick={handleReset}>
+                    ✕
+                  </button>
+              )}
+            </div>
             <button className={styles.searchButton} onClick={handleSearch}>
               검색
             </button>
@@ -135,7 +149,7 @@ const RoomList = () => {
         </section>
 
         {/* 검색 결과 정보 */}
-        {searchTerm && (
+        {searchTerm && searchOn && (
           <div className={styles.searchInfo}>
             <p>
               "{searchTerm}" 검색 결과: {filteredRooms.length}개의 방

@@ -36,9 +36,8 @@ function GameSettings({ roomId }) {
                   className="w-full px-4 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium"
                   onClick={() => setQuizSelectModalOpen(true)}
               >
-                {selectedQuiz ? selectedQuiz.title : "퀴즈 선택"}
+                {"퀴즈 선택"}
               </button>
-              {selectedQuiz && <p className="text-sm text-gray-600 mt-2">{selectedQuiz.description}</p>}
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>

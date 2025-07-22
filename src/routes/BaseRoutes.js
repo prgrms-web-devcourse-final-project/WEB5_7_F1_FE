@@ -12,6 +12,7 @@ import Rank from "../pages/rank/Rank";
 import MyPage from "../pages/mypage/MyPage";
 import HostPage from "../pages/game/HostPage";
 import ParticipantPage from "../pages/game/ParticipantPage";
+import EditQuiz from "../pages/quiz/EditQuiz";
 
 const BaseRoutes = () => {
     return (
@@ -30,7 +31,7 @@ const BaseRoutes = () => {
             <Route path="/quiz" element={<Layout />}>
                 <Route index element={<QuizList />} />
                 <Route path={"create"} element={<CreateQuiz />} />
-                <Route path={":id/edit"} element={<CreateQuiz />} />
+                <Route path={":id/edit"} element={<EditQuiz />} />
             </Route>
             <Route path="/rank" element={<Layout />}>
                 <Route index element={<Rank />} />

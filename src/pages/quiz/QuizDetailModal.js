@@ -101,7 +101,7 @@ const QuizDetailModal = ({ isOpen, onClose, quiz }) => {
                 <Stack direction="horizontal" gap={3}>
                     <Button 
                         variant="outline-primary"
-                        onClick={() => navigate(`${quiz.id}/edit`)}
+                        onClick={() => navigate(`${quiz.quizId}/edit`)}
                         className="px-4 py-2 fw-medium rounded-3"
                     >
                         퀴즈 수정

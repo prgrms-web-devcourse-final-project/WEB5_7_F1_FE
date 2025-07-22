@@ -15,7 +15,7 @@ const options = [
     { value: 'creator', label: '제작자' },
 ];
 
-const quizRequest = async (params = {}) => {
+const quizListRequest = async (params = {}) => {
     const response = await axios.get('/quizzes', { params });
     return response.data;
 };
@@ -33,7 +33,7 @@ const QuizList = () => {
     });
     const { data, refetch } = useApiQuery(
         ['quizList', queryParams],
-        () => quizRequest(queryParams),
+        () => quizListRequest(queryParams),
         {
             keepPreviousData: true,
             staleTime: 1000 * 60 * 5,
@@ -85,6 +85,17 @@ const QuizList = () => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
+    const handleReset = () => {
+        setKeyword('');
+        setQueryParams({
+            page: 1,
+            size: 8,
+            title: '',
+            creator: '',
+        });
+        // setSearchOn(false);
+    };
+
     return (
         <Container fluid className="px-4">
             {/* 검색 영역과 퀴즈 생성 버튼 */}
@@ -99,14 +110,21 @@ const QuizList = () => {
                                                   onChange={handleSearchTypeChange}
                                 />
                             </div>
-                            <Form.Control
-                                type="text"
-                                placeholder="검색어를 입력하세요..."
-                                value={keyword}
-                                onChange={(e) => setKeyword(e.target.value)}
-                                onKeyDown={handleKeyDown}
-                                className={`flex-fill ${styles.searchInput}`}
-                            />
+                            <div className={styles.searchInputWrapper}>
+                                <Form.Control
+                                    type="text"
+                                    placeholder="검색어를 입력하세요..."
+                                    value={keyword}
+                                    onChange={(e) => setKeyword(e.target.value)}
+                                    onKeyDown={handleKeyDown}
+                                    className={`flex-fill ${styles.searchInput}`}
+                                />
+                                {keyword && (
+                                    <button className={styles.clearButton} onClick={handleReset}>
+                                        ✕
+                                    </button>
+                                )}
+                            </div>
                             <Button variant="danger" type="submit" className={`${styles.buttonBase} ${styles.searchButton}`}>
                                 검색
                             </Button>

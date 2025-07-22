@@ -103,6 +103,27 @@ body {
   gap: 15px;
 }
 
+.searchInputWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
+
+//.searchInput {
+//  padding-right: 30px; /* X 버튼 영역 확보 */
+//}
+
+.clearButton {
+  position: absolute;
+  right: 8px;
+  background: transparent;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  color: #aaa;
+}
+
 .searchLabel {
   font-size: 16px;
   font-weight: bold;
@@ -892,3 +913,4 @@ body {
     }
   }
 }
+

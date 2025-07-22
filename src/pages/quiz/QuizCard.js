@@ -1,9 +1,7 @@
 import styles from './quiz.module.scss';
 import {Image, Stack} from "react-bootstrap";
-import sample from '../../assets/images/sample.png';
 
 const QuizCard = ({ quiz, onClick }) => {
-    console.log(quiz)
     return (
         <div 
             className={`${styles.quizCard} position-relative`} 
