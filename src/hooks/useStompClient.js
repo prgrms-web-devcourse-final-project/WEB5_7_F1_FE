@@ -90,23 +90,26 @@ export default function useStompClient(roomId, onMessage) {
         if (!isConnected || !stompClient || !roomId || hasInitializedRoomRef.current === true) return;
         const localKey = `enteredRoom_${roomId}`;
         const hasEnteredBefore = localStorage.getItem(localKey);
+        console.log(localKey, hasEnteredBefore, roomId)
         if (hasEnteredBefore) {
             // 재접속 또는 새로고침
             stompClient.publish({
                 destination: `/pub/room/reconnect/${roomId}`,
                 body: '',
             });
+            console.log(`🚀 초기화 메시지 전송됨: /pub/room/reconnect/${roomId}`);
+
         } else {
             // 첫 입장
             stompClient.publish({
                 destination: `/pub/room/initializeRoomSocket/${roomId}`,
                 body: '',
             });
+            console.log(`🚀 초기화 메시지 전송됨: /pub/room/initializeRoomSocket/${roomId}`);
             localStorage.setItem(localKey, 'true'); //방 목록에서 제거됨
         }
 
         hasInitializedRoomRef.current = true;
-        console.log(`🚀 초기화 메시지 전송됨: /pub/room/initializeRoomSocket/${roomId}`);
     }, [roomId, ready]);
 
     return {

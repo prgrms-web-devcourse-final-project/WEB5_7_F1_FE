@@ -1,4 +1,4 @@
-import {useNavigate, useParams} from "react-router-dom"
+import {useParams} from "react-router-dom"
 import QuizInfoCard from "../../layout/game/components/QuizInfoCard"
 import GameSettings from "../../layout/game/components/GameSettings"
 import {useRecoilValue} from "recoil";
@@ -6,31 +6,29 @@ import {
   gameSettingAtom,
   loginUserAtom,
   playerListAtom,
-  roomSettingAtom,
   stompSendMessageAtom
 } from "../../state/atoms";
 import HostPageHeader from "./HostPageHeader";
 import {useEffect, useState} from "react";
 import clsx from "clsx";
+import {isEmptyOrNull} from "../../utils/utils";
 
 function HostPage() {
   const { id: roomId } = useParams();
-  const navigate = useNavigate();
   const [isReady, setReady] = useState(false);
   const sendMessage = useRecoilValue(stompSendMessageAtom);
   const gameSetting = useRecoilValue(gameSettingAtom);
-  console.log(gameSetting);
 
   //현재 로그인 유저를 찾고 방장인지 확인
   const playerList = useRecoilValue(playerListAtom);
   const loginUser = useRecoilValue(loginUserAtom);
   const matchingPlayers = playerList.filter(player => player.nickname === loginUser.name);
   const isHost = matchingPlayers.some(player => player.status === "host");
-  const allReady = playerList.every(player => player.ready);
+  const allReady = playerList.length > 1 && playerList.every(player => player.ready);
 
   useEffect(() => {
-    if (playerList) {
-      setReady(matchingPlayers.ready);
+    if (playerList && !isEmptyOrNull(matchingPlayers)) {
+      setReady(matchingPlayers[0].ready);
     }
   }, [playerList])
 

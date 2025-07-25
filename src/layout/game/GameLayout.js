@@ -96,7 +96,8 @@ const GameLayout = () => {
                 setChat(payload.message);
                 break;
             case "GAME_START":
-                setQuestions(payload.message);
+                setQuestions(payload.message.questions);
+                navigate("play");
                 break;
             case "QUESTION_START":
                 setQuestionStart(payload.message);
@@ -121,7 +122,6 @@ const GameLayout = () => {
     const { sendMessage } = useStompClient(roomId, handleStompMessage);
 
     useEffect(() => {
-        console.log('📦 sendMessage:', sendMessage);
         if (sendMessage) {
             setSendMessage(() => sendMessage); // Recoil 전역 등록
         }

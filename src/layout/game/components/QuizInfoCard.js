@@ -1,6 +1,4 @@
-import { MessageCircleQuestion, Clock, List } from "lucide-react"
-import {useRecoilValue} from "recoil";
-import {gameSettingAtom} from "../../../state/atoms";
+import {Clock, List, MessageCircleQuestion} from "lucide-react"
 
 function QuizInfoCard({ gameSetting }) {
   return (

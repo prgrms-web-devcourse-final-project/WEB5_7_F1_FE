@@ -6,8 +6,6 @@ import {useRecoilValue} from "recoil";
 import {stompSendMessageAtom} from "../../../state/atoms";
 
 function GameSettings({ roomId, gameSetting, allReady }) {
-  const [timePerQuestion, setTimePerQuestion] = useState(60);
-  const [questionCount, setQuestionCount] = useState(gameSetting?.quiz.numberOfQuestion);
   const [quizSelectModalOpen, setQuizSelectModalOpen] = useState(false);
   const navigate = useNavigate();
   const sendMessage = useRecoilValue(stompSendMessageAtom);
@@ -23,29 +21,26 @@ function GameSettings({ roomId, gameSetting, allReady }) {
         "quizId" : quiz.quizId,
       }
     }
-    sendMessage(`/room/quiz/${roomId}`, quizChangeMessage);
+    sendMessage(`/pub/room/quiz/${roomId}`, quizChangeMessage);
   }
 
-  const handleTimePerQuestionChange = (e) => {
-    console.log('handleTimePerQuestionChange: ', e.target.value)
-    setTimePerQuestion(e.target.value);
-    const timePerQuestionMessage = {
+  const handleTimeLimitChange = (e) => {
+    const timeLimitMessage = {
       "message" : {
         "timeLimit" : e.target.value
       }
     }
-    sendMessage(`/room/time-limit/${roomId}`, timePerQuestionMessage);
+    sendMessage(`/pub/room/time-limit/${roomId}`, timeLimitMessage);
   };
 
-  const handleQuestionCountChange = (e) => {
+  const handleRoundChange = (e) => {
     console.log('handleQuestionCountChange: ', e.target.value)
-    setQuestionCount(e.target.value);
-    const questionCountMessage = {
+    const roundMessage = {
       "message" : {
         "round" : e.target.value
       }
     }
-    sendMessage(`/room/round/${roomId}`, questionCountMessage);
+    sendMessage(`/pub/room/round/${roomId}`, roundMessage);
   };
 
   return (
@@ -69,8 +64,8 @@ function GameSettings({ roomId, gameSetting, allReady }) {
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">제한 시간</label>
                 <select
-                    value={timePerQuestion}
-                    onChange={handleTimePerQuestionChange}
+                    value={gameSetting?.timeLimit}
+                    onChange={handleTimeLimitChange}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 appearance-none bg-white bg-no-repeat bg-right pr-8"
                     style={{
                       backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' strokeLinecap='round' strokeLinejoin='round' strokeWidth='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e")`,
@@ -87,8 +82,8 @@ function GameSettings({ roomId, gameSetting, allReady }) {
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">라운드</label>
                 <select
-                    value={questionCount}
-                    onChange={handleQuestionCountChange}
+                    value={gameSetting?.round}
+                    onChange={handleRoundChange}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 appearance-none bg-white bg-no-repeat bg-right pr-8"
                     style={{
                       backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' strokeLinecap='round' strokeLinejoin='round' strokeWidth='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e")`,

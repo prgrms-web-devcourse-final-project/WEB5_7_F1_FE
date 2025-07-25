@@ -13,6 +13,7 @@ import MyPage from "../pages/mypage/MyPage";
 import HostPage from "../pages/game/HostPage";
 import ParticipantPage from "../pages/game/ParticipantPage";
 import EditQuiz from "../pages/quiz/EditQuiz";
+import AdminLogin from "../pages/login/AdminLogin";
 
 const BaseRoutes = () => {
     return (
@@ -39,6 +40,7 @@ const BaseRoutes = () => {
             <Route path="/mypage" element={<Layout />}>
                 <Route index element={<MyPage />} />
             </Route>
+            <Route path={"/admin/login"} element={<AdminLogin />} />
             {/* 에러페이지 */}
             <Route path={"*"} element={<Error404 />} />
         </Routes>

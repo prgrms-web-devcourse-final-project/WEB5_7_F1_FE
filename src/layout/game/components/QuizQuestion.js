@@ -1,4 +1,4 @@
-function QuizQuestion({ questionNumber, totalQuestions, question }) {
+function QuizQuestion({ question }) {
   return (
     <div className="bg-white rounded-2xl shadow-lg p-8 mb-8 flex-1 flex items-center justify-center">
       <div className="text-center">
