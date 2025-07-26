@@ -27,7 +27,7 @@ export default function useStompClient(roomId, onMessage) {
         stompClient = new Client({
             brokerURL: 'wss://brainrace.duckdns.org:7080/ws/game-room',
             reconnectDelay: 5000,
-            debug: (msg) => console.log('[STOMP]', msg),
+            // debug: (msg) => console.log('[STOMP]', msg),
             onConnect: () => {
                 console.log('✅ STOMP 연결됨');
                 isConnected = true;
@@ -54,20 +54,30 @@ export default function useStompClient(roomId, onMessage) {
     useEffect(() => {
         if (!stompClient || !isConnected || !roomId) return;
 
-        console.log(`📥 구독 시작: /sub/room/${roomId}`);
+        console.log(`📥 구독 시작: /sub/room/${roomId}, /user/queue`);
 
-        const subscription = stompClient.subscribe(`/sub/room/${roomId}`, (message) => {
+        const roomSubscription = stompClient.subscribe(`/sub/room/${roomId}`, (message) => {
             try {
                 const payload = JSON.parse(message.body);
                 onMessageRef.current?.(payload);
             } catch (err) {
-                console.error('❌ 메시지 파싱 실패:', err);
+                console.error('❌ room 메시지 파싱 실패:', err);
+            }
+        });
+
+        const privateSubscription = stompClient.subscribe(`/user/queue`, (message) => {
+            try {
+                const payload = JSON.parse(message.body);
+                onMessageRef.current?.(payload);
+            } catch (err) {
+                console.error('❌ private 메시지 파싱 실패:', err);
             }
         });
 
         return () => {
-            subscription.unsubscribe();
-            console.log(`📤 구독 해제: /sub/room/${roomId}`);
+            roomSubscription.unsubscribe();
+            privateSubscription.unsubscribe();
+            console.log(`📤 구독 해제: /sub/room/${roomId}, /user/queue`);
         };
     }, [roomId, ready]);
 

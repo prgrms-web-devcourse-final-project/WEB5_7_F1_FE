@@ -34,7 +34,6 @@ function GameSettings({ roomId, gameSetting, allReady }) {
   };
 
   const handleRoundChange = (e) => {
-    console.log('handleQuestionCountChange: ', e.target.value)
     const roundMessage = {
       "message" : {
         "round" : e.target.value

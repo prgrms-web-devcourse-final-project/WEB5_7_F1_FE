@@ -1,10 +1,9 @@
-"use client"
-
-import { useState, useEffect } from "react"
-import { Medal, Crown, X } from "lucide-react"
+import {useEffect, useState} from "react"
+import {Clock} from "lucide-react";
+import QuizTimer from "./QuizTimer";
 
 function QuizResultsModal({ isVisible, results, onClose }) {
-  const [showModal, setShowModal] = useState(false)
+  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     if (isVisible) {
@@ -62,13 +61,29 @@ function QuizResultsModal({ isVisible, results, onClose }) {
         }`}
         onClick={(e) => e.stopPropagation()}
       >
+        {/* 헤더 */}
         <div className="flex justify-between items-start mb-6">
           <h2 className="text-2xl font-bold text-gray-900">🏁 퀴즈 최종 결과</h2>
-          <button onClick={handleClose} className="text-gray-400 hover:text-gray-600 transition-colors p-1">
-            <X className="w-6 h-6" />
-          </button>
+          <QuizTimer duration={10} onTimeUp={onClose} size={"small"}/>
         </div>
-
+        {/* 대기실 이동 안내 */}
+        <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <Clock className="w-5 h-5 text-blue-600" />
+              <div>
+                <p className="text-sm font-semibold text-blue-800">잠시 후 대기실로 이동합니다</p>
+                <p className="text-xs text-blue-600 mt-1">타이머가 끝나면 자동으로 대기실로 돌아갑니다</p>
+              </div>
+            </div>
+            {/*<div className="flex items-center gap-2 text-blue-600">*/}
+            {/*  <Users className="w-4 h-4" />*/}
+            {/*  <ArrowRight className="w-4 h-4" />*/}
+            {/*  <span className="text-sm font-medium">대기실</span>*/}
+            {/*</div>*/}
+          </div>
+        </div>
+        {/* 결과테이블 */}
         <div className="bg-white rounded-xl border border-gray-200">
           <div className="overflow-x-auto">
             <table className="w-full">
@@ -92,9 +107,9 @@ function QuizResultsModal({ isVisible, results, onClose }) {
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-4 text-sm font-medium text-gray-900">{result.name}</td>
+                    <td className="px-6 py-4 text-sm font-medium text-gray-900">{result.nickname}</td>
                     <td className="px-6 py-4 text-center text-sm text-green-600 font-semibold">
-                      {result.correctAnswers} / {result.totalQuestions}
+                      {result.totalCorrectCount}
                     </td>
                     <td className="px-6 py-4 text-right text-sm font-bold text-gray-900">{result.score}점</td>
                   </tr>
@@ -102,15 +117,6 @@ function QuizResultsModal({ isVisible, results, onClose }) {
               </tbody>
             </table>
           </div>
-        </div>
-
-        <div className="mt-6 flex justify-center">
-          <button
-            onClick={handleClose}
-            className="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium"
-          >
-            닫기
-          </button>
         </div>
       </div>
     </div>

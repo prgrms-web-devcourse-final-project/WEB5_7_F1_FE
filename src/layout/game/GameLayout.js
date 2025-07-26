@@ -128,14 +128,13 @@ const GameLayout = () => {
     }, [sendMessage]);
 
     return (
-        <div className="d-flex flex-column vh-100">
-            <div className="d-flex flex-grow-1">
-                <Sidebar />
-                <main className="flex-grow-1">
-                    <Outlet />
-                </main>
-            </div>
+        <div className="flex h-screen">
+            <Sidebar />
+            <main className="flex-1 overflow-y-auto">
+                <Outlet />
+            </main>
         </div>
+
     );
 }
 

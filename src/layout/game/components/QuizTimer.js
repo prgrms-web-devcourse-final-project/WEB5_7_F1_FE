@@ -1,23 +1,21 @@
-"use client"
-
 import { useState, useEffect } from "react"
 
-function QuizTimer({ duration, onTimeUp }) {
+function QuizTimer({ duration, onTimeUp, size = "default" }) {
   const [timeLeft, setTimeLeft] = useState(duration)
 
   useEffect(() => {
-    setTimeLeft(duration)
+    setTimeLeft(duration);
   }, [duration])
 
   useEffect(() => {
     if (duration === 0) {
       setTimeLeft(0)
-      return
+      return;
     }
 
     if (timeLeft <= 0) {
       onTimeUp()
-      return
+      return;
     }
 
     const timer = setInterval(() => {
@@ -27,21 +25,34 @@ function QuizTimer({ duration, onTimeUp }) {
     return () => clearInterval(timer)
   }, [timeLeft, onTimeUp, duration])
 
-  const circumference = 2 * Math.PI * 45
-  const strokeDashoffset = duration > 0 ? circumference - (circumference * timeLeft) / duration : circumference
+  const isSmall = size === "small";
+  const wrapperClass = isSmall
+      ? "w-12 h-12 shadow-md"
+      : "w-20 h-20 shadow-lg";
+  const svgClass = isSmall
+      ? "w-10 h-10"
+      : "w-16 h-16";
+  const textClass = isSmall
+      ? "text-sm font-semibold"
+      : "text-xl font-bold";
+
+  const strokeWidth = isSmall ? 6 : 8;
+  const radius = 45;
+  const circumference = 2 * Math.PI * radius;
+  const strokeDashoffset = duration > 0 ? circumference - (circumference * timeLeft) / duration : circumference;
   const isLowTime = timeLeft <= 5 && timeLeft > 0
 
   return (
     <div className="relative">
-      <div className="w-20 h-20 bg-white rounded-full shadow-lg flex items-center justify-center">
-        <svg className="w-16 h-16 transform -rotate-90" viewBox="0 0 100 100">
+      <div className={`bg-white rounded-full flex items-center justify-center ${wrapperClass}`}>
+        <svg className={`${svgClass} transform -rotate-90`} viewBox="0 0 100 100">
           <circle cx="50" cy="50" r="45" stroke="#f3f4f6" strokeWidth="8" fill="none" />
           <circle
             cx="50"
             cy="50"
-            r="45"
+            r={radius}
             stroke={isLowTime ? "#ef4444" : "#10b981"}
-            strokeWidth="8"
+            strokeWidth={strokeWidth}
             fill="none"
             strokeDasharray={circumference}
             strokeDashoffset={strokeDashoffset}
@@ -49,11 +60,11 @@ function QuizTimer({ duration, onTimeUp }) {
           />
         </svg>
         <div className="absolute inset-0 flex items-center justify-center">
-          <span className={`text-xl font-bold ${isLowTime ? "text-red-500" : "text-gray-900"}`}>{timeLeft}</span>
+          <span className={`${textClass} ${isLowTime ? "text-red-500" : "text-gray-900"}`}>{timeLeft}</span>
         </div>
       </div>
     </div>
   )
 }
 
-export default QuizTimer
+export default QuizTimer;
