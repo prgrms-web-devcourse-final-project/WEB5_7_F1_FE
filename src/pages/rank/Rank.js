@@ -29,7 +29,6 @@ const Rank = () => {
       ['/stats/rankings', params], // queryKey에 params 포함
       () => rankRequest(params)
   );
-console.log(data);
 
   useEffect(() => {
     if (data) {

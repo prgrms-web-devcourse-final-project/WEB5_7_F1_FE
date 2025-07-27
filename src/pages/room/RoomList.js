@@ -11,6 +11,7 @@ import {useApiQuery} from "../../hooks/useApiQuery";
 import axios from "axios";
 import {useApiMutation} from "../../hooks/useApiMutation";
 import {useNavigate} from "react-router-dom";
+import useRoomSseClient from "../../hooks/useRoomSseClient";
 
 const roomsRequest = async () => {
   const response = await axios.get(`/rooms`);
@@ -44,6 +45,19 @@ const RoomList = () => {
       ["rooms"],
       () => roomsRequest(),
   );
+
+  useRoomSseClient((event) => {
+    const { type, payload } = event;
+  console.log(type, payload)
+    setRooms((prev) => {
+      switch (type) {
+        case 'CREATE':
+        case 'UPDATE':
+        case 'DELETE':
+        default:
+      }
+    });
+  });
 
   const { mutate: createRoomMutate } = useApiMutation(createRoomRequest, {
     onSuccess: (data) => {

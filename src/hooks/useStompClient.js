@@ -25,7 +25,7 @@ export default function useStompClient(roomId, onMessage) {
         isConnecting = true;
 
         stompClient = new Client({
-            brokerURL: 'wss://brainrace.duckdns.org:7080/ws/game-room',
+            brokerURL: `${process.env.REACT_APP_WS_BASE_URL}/ws/game-room`,
             reconnectDelay: 5000,
             // debug: (msg) => console.log('[STOMP]', msg),
             onConnect: () => {

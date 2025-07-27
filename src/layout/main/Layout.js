@@ -185,15 +185,17 @@ const Layout = () => {
                                     Quiz
                                 </NavLink>
 
-                                <NavLink 
-                                    to="/room" 
+                                {data && data.role === 'ROLE_USER' && <NavLink
+                                    to="/room"
                                     style={({isActive}) => ({
                                         ...f1Styles.navLink,
-                                        ...(isActive ? f1Styles.navLinkActive : {})
+                                        ...(isActive ? f1Styles.navLinkActive
+                                            : {})
                                     })}
                                     onMouseEnter={(e) => {
                                         if (!isActive('/room')) {
-                                            Object.assign(e.target.style, f1Styles.navLinkHover);
+                                            Object.assign(e.target.style,
+                                                f1Styles.navLinkHover);
                                         }
                                     }}
                                     onMouseLeave={(e) => {
@@ -204,7 +206,7 @@ const Layout = () => {
                                     }}
                                 >
                                     게임하기
-                                </NavLink>
+                                </NavLink>}
 
                                 <NavLink 
                                     to="/rank" 
@@ -227,15 +229,17 @@ const Layout = () => {
                                     전체 랭킹
                                 </NavLink>
 
-                                <NavLink 
-                                    to="/mypage" 
+                                {data && data.role === 'ROLE_USER' &&<NavLink
+                                    to="/mypage"
                                     style={({isActive}) => ({
                                         ...f1Styles.navLink,
-                                        ...(isActive ? f1Styles.navLinkActive : {})
+                                        ...(isActive ? f1Styles.navLinkActive
+                                            : {})
                                     })}
                                     onMouseEnter={(e) => {
                                         if (!isActive('/mypage')) {
-                                            Object.assign(e.target.style, f1Styles.navLinkHover);
+                                            Object.assign(e.target.style,
+                                                f1Styles.navLinkHover);
                                         }
                                     }}
                                     onMouseLeave={(e) => {
@@ -246,7 +250,30 @@ const Layout = () => {
                                     }}
                                 >
                                     마이페이지
-                                </NavLink>
+                                </NavLink>}
+
+                                {data && data.role === 'ROLE_ADMIN' &&<NavLink
+                                    to="/users"
+                                    style={({isActive}) => ({
+                                        ...f1Styles.navLink,
+                                        ...(isActive ? f1Styles.navLinkActive
+                                            : {})
+                                    })}
+                                    onMouseEnter={(e) => {
+                                        if (!isActive('/users')) {
+                                            Object.assign(e.target.style,
+                                                f1Styles.navLinkHover);
+                                        }
+                                    }}
+                                    onMouseLeave={(e) => {
+                                        if (!isActive('/users')) {
+                                            e.target.style.backgroundColor = 'transparent';
+                                            e.target.style.transform = 'translateY(0)';
+                                        }
+                                    }}
+                                >
+                                    관리자 메뉴
+                                </NavLink>}
 
                                 <button
                                     style={f1Styles.logoutButton}

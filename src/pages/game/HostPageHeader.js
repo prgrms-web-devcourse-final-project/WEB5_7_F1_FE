@@ -1,9 +1,10 @@
 import {Flag, Lock, LogOut, Users} from "lucide-react";
 import {useRecoilValue} from "recoil";
-import {roomSettingAtom} from "../../state/atoms";
+import {playerListAtom, roomSettingAtom} from "../../state/atoms";
 
 const HostPageHeader = ({ isHost, handleExitRoomClick }) => {
     const roomSetting = useRecoilValue(roomSettingAtom);
+    const playerList = useRecoilValue(playerListAtom);
 
     return (
         <header className="bg-gradient-to-r from-red-600 to-red-500 text-white py-4 px-6 shadow-lg">
@@ -22,7 +23,7 @@ const HostPageHeader = ({ isHost, handleExitRoomClick }) => {
                 <div className="flex items-center space-x-4">
                     <div className="flex items-center space-x-2">
                         <Users className="w-5 h-5" />
-                        <span className="font-semibold">{roomSetting?.currentUserCount}/{roomSetting?.maxUserCount} 플레이어</span>
+                        <span className="font-semibold">{playerList?.length}/{roomSetting?.maxUserCount} 플레이어</span>
                     </div>
                     {isHost && <div className="bg-yellow-500/20 px-3 py-1 rounded-full">
                         <span className="text-sm font-medium">👑 방장</span>

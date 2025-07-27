@@ -7,7 +7,7 @@ import {RecoilRoot} from "recoil";
 import {QueryClient, QueryClientProvider} from "react-query";
 import axios from "axios";
 
-axios.defaults.baseURL = process.env.REACT_APP_API_URL || "https://brainrace.duckdns.org:7080";
+axios.defaults.baseURL = process.env.REACT_APP_API_BASE_URL || "https://api-brainrace.duckdns.org";
 // react-qeury사용을 위해 선언
 const queryClient = new QueryClient({
     defaultOptions: {

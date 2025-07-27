@@ -14,6 +14,7 @@ import HostPage from "../pages/game/HostPage";
 import ParticipantPage from "../pages/game/ParticipantPage";
 import EditQuiz from "../pages/quiz/EditQuiz";
 import AdminLogin from "../pages/login/AdminLogin";
+import UserList from "../pages/admin/UserList";
 
 const BaseRoutes = () => {
     return (
@@ -39,6 +40,9 @@ const BaseRoutes = () => {
             </Route>
             <Route path="/mypage" element={<Layout />}>
                 <Route index element={<MyPage />} />
+            </Route>
+            <Route path="/users" element={<Layout />}>
+                <Route index element={<UserList />} />
             </Route>
             <Route path={"/admin/login"} element={<AdminLogin />} />
             {/* 에러페이지 */}
