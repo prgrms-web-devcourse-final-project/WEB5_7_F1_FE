@@ -1,10 +1,13 @@
 // Rank.jsx
-import { Button, Form, Stack } from "react-bootstrap";
-import { useState } from "react";
+import {Button, Form} from "react-bootstrap";
+import {useEffect, useState} from "react";
 import styles from './rank.module.scss';
 import TableBackGroundCard from "../../shared/TableBackGroundCard";
 import FlexibleTable from "../../shared/table/FlexibleTable";
 import PaginationNavigator from '../../layout/PaginationNavigator.js';
+import axios from "axios";
+import {useApiQuery} from "../../hooks/useApiQuery";
+import {useQueryParam} from "../../hooks/QueryParam";
 
 const initColumns = [
   { accessorKey: "rank", header: "순위" },
@@ -13,29 +16,43 @@ const initColumns = [
   { accessorKey: "score", header: "점수" },
 ];
 
-const sampleData = [
-  { rank: 1, nickname: "세희", winLoss: "50전 30승 20패", score: "4931점" },
-  { rank: 2, nickname: "경찬", winLoss: "48전 28승 20패", score: "4825점" },
-  { rank: 3, nickname: "강현", winLoss: "45전 27승 18패", score: "4720점" },
-  { rank: 4, nickname: "민수", winLoss: "42전 25승 17패", score: "4615점" },
-  { rank: 5, nickname: "지영", winLoss: "40전 24승 16패", score: "4510점" },
-  { rank: 6, nickname: "현우", winLoss: "38전 22승 16패", score: "4405점" },
-  { rank: 7, nickname: "수진", winLoss: "35전 20승 15패", score: "4300점" },
-  { rank: 8, nickname: "태현", winLoss: "33전 19승 14패", score: "4195점" },
-  { rank: 9, nickname: "은지", winLoss: "30전 17승 13패", score: "4090점" },
-  { rank: 10, nickname: "준호", winLoss: "28전 15승 13패", score: "3985점" },
-];
+const rankRequest = async (params) => {
+  const response = await axios.get(`/stats/rankings`, {params});
+  return response.data;
+};
 
 const Rank = () => {
   const [keyword, setKeyword] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
-  const totalPages = Math.ceil(sampleData.length / itemsPerPage);
+  const [tableRows, setTableRows] = useState([]);
+  const [params, setParams] = useQueryParam();
+  const { data } = useApiQuery(
+      ['/stats/rankings', params], // queryKey에 params 포함
+      () => rankRequest(params)
+  );
+console.log(data);
+
+  useEffect(() => {
+    if (data) {
+      const processedRows = data.ranks.map((item) => {
+        return {
+          rank: item.rank,
+          nickname: item.nickname,
+          winLoss: `${item.totalGames}전 ${item.winningGames}승 ${item.totalGames - item.winningGames}패`,
+          score: `${item.score}점`
+        }
+      })
+      setTableRows(processedRows);
+    }
+  }, [data])
 
   const handleSearchClick = (e) => {
     e.preventDefault();
     e.stopPropagation();
     console.log("🔍 검색 버튼 클릭됨");
+    setParams({
+      page: 1,
+      nickname: keyword.trim()
+    })
   };
 
   const handleKeyDown = (e) => {
@@ -44,17 +61,6 @@ const Rank = () => {
       handleSearchClick(e);
     }
   };
-
-  const handlePageChange = (page) => {
-    setCurrentPage(page);
-    console.log(`페이지 ${page}로 이동`);
-  };
-
-  // 현재 페이지 데이터
-  const currentData = sampleData.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
 
   return (
     <div className={styles.container}>
@@ -97,16 +103,15 @@ const Rank = () => {
         
         <div className={styles.tableContainer}>
           <TableBackGroundCard className={styles.rankingCard}>
-            <FlexibleTable initColumns={initColumns} data={currentData} />
+            <FlexibleTable initColumns={initColumns} data={tableRows} />
           </TableBackGroundCard>
           
           {/* Pagination */}
-
-                  <PaginationNavigator
-                currentPage={currentPage}
-                totalPages={5}
-                onPageChange={setCurrentPage}
-                />
+          <PaginationNavigator currentPage={data?.currentPage} totalPages={data?.totalPages}
+                               onPageChange={(page) => setParams({
+                                 ...params
+                                 ,page: page,
+                               })}/>
         </div>
       </div>
 

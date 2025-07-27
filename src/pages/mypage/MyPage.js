@@ -1,37 +1,69 @@
-import { useState } from 'react';
+import {useEffect, useState} from 'react';
 import useConfirm from '../../hooks/useConfirm';
-import { useNavigate } from 'react-router-dom';
-import { Trophy, BarChart3 } from 'lucide-react';
+import {useNavigate} from 'react-router-dom';
+import {BarChart3, Trophy} from 'lucide-react';
 import styles from './mypage.module.scss'
+import axios from "axios";
+import NicknameForm from "../login/NicknameForm";
+import {useApiQuery} from "../../hooks/useApiQuery";
+import {useApiMutation} from "../../hooks/useApiMutation";
 
-const userStats = {
-  nickname: '빵야빵야',
-  totalGames: 50,
-  wins: 30,
-  losses: 20,
-  score: 70,
-  currentRank: 3,
+const userRequest = async () => {
+  const response = await axios.get(`/user/me`);
+  return response.data;
+};
+
+const userDeleteRequest = async () => {
+  await axios.delete(`/user/me`);
+};
+
+const userEditRequest = async (nickname) => {
+  const params = {
+    nickname
+  };
+  await axios.put('/user/me', params);
 };
 
 const MyPage = () => {
   const [nickname, setNickname] = useState('빵야빵야');
+  const [error, setError] = useState({
+    nickname: "",
+  });
+  const [inputStatus, setInputStatus] = useState({
+    nickname: false,
+  });
   const { openConfirm } = useConfirm();
   const navigate = useNavigate();
+  const { data } = useApiQuery(
+      ['/user/me'],
+      () => userRequest()
+  );
+  const { mutate: userDeleteMutate } = useApiMutation(userDeleteRequest, {
+    onSuccess: () => {
+      // 회원가입 완료 후 방 목록으로 이동
+      navigate("/login");
+    },
+  });
 
-  const handleDuplicateCheck = () => {
-    openConfirm({
-      title: '중복 확인',
-      html: <div>사용 가능한 닉네임입니다.</div>,
-      confirmButtonText: '확인',
-    });
-  };
+  const { mutate: userEditMutate } = useApiMutation(userEditRequest, {
+    onSuccess: () => {
+      openConfirm({
+        title: '프로필 수정',
+        html: <div>저장되었습니다.</div>,
+        confirmButtonText: '확인',
+      });
+    },
+  });
 
-  const handleSaveClick = () => {
-    openConfirm({
-      title: '프로필 수정',
-      html: <div>저장되었습니다.</div>,
-      confirmButtonText: '확인',
-    });
+  useEffect(() => {
+      if (data) {
+          setNickname(data.nickname)
+      }
+  }, [data])
+
+  const handleSaveClick = (e) => {
+    e.preventDefault();
+    userEditMutate(nickname);
   };
 
   const handleExitClick = () => {
@@ -45,7 +77,7 @@ const MyPage = () => {
         </div>
       ),
       confirmButtonText: '탈퇴',
-      callback: () => navigate('/login'),
+      callback: () => userDeleteMutate(),
     });
   };
 
@@ -59,34 +91,14 @@ const MyPage = () => {
             <span className={styles.headerText}>프로필 정보</span>
           </div>
           <div className={styles.form}>
-            <form>
-              {/* 닉네임 섹션 */}
-              <div className={styles.inputRow}>
-                <label className={styles.label}>닉네임</label>
-                <input
-                  type='text'
-                  value={nickname}
-                  onChange={(e) => setNickname(e.target.value)}
-                  className={styles.input}
-                  onFocus={(e) => (e.target.style.borderColor = '#dc2626')}
-                  onBlur={(e) =>
-                    (e.target.style.borderColor = 'rgba(220, 38, 38, 0.5)')
-                  }
-                />
-                <button
-                  type='button'
-                  onClick={handleDuplicateCheck}
-                  className={styles.button}
-                  onMouseOver={(e) =>
-                    (e.target.style.backgroundColor = '#b91c1c')
-                  }
-                  onMouseOut={(e) =>
-                    (e.target.style.backgroundColor = '#dc2626')
-                  }
-                >
-                  중복 체크
-                </button>
-              </div>
+            <form className={styles.nicknameForm} onSubmit={handleSaveClick}>
+              <NicknameForm
+                  nickname={nickname}
+                  setNickname={setNickname}
+                  error={error}
+                  setError={setError}
+                  setInputStatus={setInputStatus}
+              />
 
               {/* 게임 통계 섹션 */}
               <div className={styles.statsCard}>
@@ -98,18 +110,18 @@ const MyPage = () => {
                   <div className={styles.statsRow}>
                     <label className={styles.label}>전적</label>
                     <span style={{ color: '#374151', fontWeight: '600' }}>
-                      {userStats.totalGames}전 {userStats.wins}승{' '}
-                      {userStats.losses}패
+                      {data?.totalGames}전 {data?.winningGames}승{' '}
+                      {data ? (data.totalGames - data.winningGames) : '' }패
                     </span>
                   </div>
                   <div className={styles.statsRow}>
                     <label className={styles.label}>점수</label>
-                    <span className={styles.score}>{userStats.score}점</span>
+                    <span className={styles.score}>{data?.score}점</span>
                   </div>
                   <div className={styles.statsRow}>
                     <label className={styles.label}>현재 랭킹</label>
                     <span className={styles.rankBadge}>
-                      {userStats.currentRank}위
+                      {data?.rank}위
                     </span>
                   </div>
                 </div>
@@ -118,17 +130,9 @@ const MyPage = () => {
               {/* 버튼 영역 */}
               <div className={styles.buttonGroup}>
                 <button
-                  type='button'
-                  onClick={handleSaveClick}
+                  type='submit'
                   className={styles.saveButton}
-                  onMouseOver={(e) => {
-                    e.target.style.backgroundColor = '#dc2626';
-                    e.target.style.color = 'white';
-                  }}
-                  onMouseOut={(e) => {
-                    e.target.style.backgroundColor = 'transparent';
-                    e.target.style.color = '#dc2626';
-                  }}
+                  disabled={!inputStatus.nickname}
                 >
                   변경사항 저장
                 </button>

@@ -104,7 +104,7 @@ function GamePlay() {
                             {questions && currentQuestion && `${currentQuestion.round} / ${questions.length}`}
                         </span>
                     </div>
-                    <QuizTimer duration={currentQuestion ? currentQuestion.timeLimit : 0} onTimeUp={handleTimeUp} />
+                    {visibleQuestion && <QuizTimer duration={currentQuestion.timeLimit} onTimeUp={handleTimeUp}/>}
                 </div>
 
                 {/* Question Content */}
