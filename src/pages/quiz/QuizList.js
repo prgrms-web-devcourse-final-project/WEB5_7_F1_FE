@@ -9,6 +9,7 @@ import QuizSearchSelect from "./QuizSearchSelect";
 import {useApiQuery} from "../../hooks/useApiQuery";
 import axios from "axios";
 import {isEmptyOrNull} from "../../utils/utils";
+import Spinner from "../../shared/Spinner";
 
 const options = [
     { value: 'title', label: '제목' },
@@ -31,7 +32,7 @@ const QuizList = () => {
         title: '',
         creator: '',
     });
-    const { data, refetch } = useApiQuery(
+    const { data, isLoading, isFetching } = useApiQuery(
         ['quizList', queryParams],
         () => quizListRequest(queryParams),
         {
@@ -75,7 +76,6 @@ const QuizList = () => {
 
     // 검색 타입 변경 이벤트
     const handleSearchTypeChange = (selectedOption) => {
-        console.log(selectedOption)
         setSelectedSearchType(selectedOption);
     };
 
@@ -98,7 +98,7 @@ const QuizList = () => {
 
     return (
         <Container fluid className="px-4">
-            {/* 검색 영역과 퀴즈 생성 버튼 */}
+            <Spinner show={isLoading || isFetching} />
             <div className="d-flex justify-content-center align-items-start mb-4 gap-3">
                 {/* 검색 영역 */}
                 <div style={{ width: "700px" }}>

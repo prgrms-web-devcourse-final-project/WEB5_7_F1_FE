@@ -4,6 +4,7 @@ import styles from "./Login.module.scss"
 import {useState} from "react";
 import {useApiMutation} from "../../hooks/useApiMutation";
 import axios from "axios";
+import Spinner from "../../shared/Spinner";
 
 const loginRequest = async ({ username, password }) => {
     const params = new URLSearchParams();
@@ -27,7 +28,7 @@ const AdminLogin = () => {
         password: "",
     });
 
-    const { mutate: loginMutate } = useApiMutation(loginRequest, {
+    const { mutate: loginMutate, isLoading } = useApiMutation(loginRequest, {
         onSuccess: () => {
             navigate("/room");
         },
@@ -47,41 +48,42 @@ const AdminLogin = () => {
     }
 
     return (
-    <div className={styles.loginContainer}>
-      <div className={styles.loginCard}>
-        <div className={styles.loginLogo}>
-          <img src={mainLogo || "/placeholder.svg"} alt="뇌피셜 로고" className={styles.loginLogoImage} />
+        <div className={styles.loginContainer}>
+            <Spinner show={isLoading} />
+            <div className={styles.loginCard}>
+                <div className={styles.loginLogo}>
+                    <img src={mainLogo || "/placeholder.svg"} alt="뇌피셜 로고" className={styles.loginLogoImage} />
+                </div>
+                <form onSubmit={handleSubmit} className={styles.loginForm}>
+                    <div className={styles.inputGroup}>
+                        <input
+                          type="text"
+                          name="username"
+                          placeholder="아이디"
+                          value={loginData.username}
+                          onChange={handleInputChange}
+                          className={styles.loginInput}
+                          required
+                        />
+                    </div>
+                    <div className={styles.inputGroup}>
+                        <input
+                            type="password"
+                            name="password"
+                            placeholder="비밀번호"
+                            value={loginData.password}
+                            onChange={handleInputChange}
+                            className={styles.loginInput}
+                            required
+                        />
+                    </div>
+                    <button type="submit" className={styles.loginButton}>
+                        관리자 로그인
+                    </button>
+                </form>
+            </div>
         </div>
-          <form onSubmit={handleSubmit} className={styles.loginForm}>
-              <div className={styles.inputGroup}>
-                  <input
-                      type="text"
-                      name="username"
-                      placeholder="아이디"
-                      value={loginData.username}
-                      onChange={handleInputChange}
-                      className={styles.loginInput}
-                      required
-                  />
-              </div>
-              <div className={styles.inputGroup}>
-                  <input
-                      type="password"
-                      name="password"
-                      placeholder="비밀번호"
-                      value={loginData.password}
-                      onChange={handleInputChange}
-                      className={styles.loginInput}
-                      required
-                  />
-              </div>
-              <button type="submit" className={styles.loginButton}>
-                  관리자 로그인
-              </button>
-          </form>
-      </div>
-    </div>
-  )
+    )
 }
 
 export default AdminLogin

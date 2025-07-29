@@ -8,6 +8,7 @@ import PaginationNavigator from '../../layout/PaginationNavigator.js';
 import axios from "axios";
 import {useApiQuery} from "../../hooks/useApiQuery";
 import {useQueryParam} from "../../hooks/QueryParam";
+import Spinner from "../../shared/Spinner";
 
 const initColumns = [
   { accessorKey: "rank", header: "순위" },
@@ -25,7 +26,7 @@ const Rank = () => {
   const [keyword, setKeyword] = useState("");
   const [tableRows, setTableRows] = useState([]);
   const [params, setParams] = useQueryParam();
-  const { data } = useApiQuery(
+  const { data, isLoading, isFetching } = useApiQuery(
       ['/stats/rankings', params], // queryKey에 params 포함
       () => rankRequest(params)
   );
@@ -63,7 +64,7 @@ const Rank = () => {
 
   return (
     <div className={styles.container}>
-
+      <Spinner show={isLoading || isFetching} />
       {/* Hero Section */}
       <div className={styles.heroSection}>
         <div className={styles.heroContent}>

@@ -7,6 +7,7 @@ import TableBackGroundCard from "../../shared/TableBackGroundCard";
 import {useApiQuery} from "../../hooks/useApiQuery";
 import {useQueryParam} from "../../hooks/QueryParam";
 import axios from "axios";
+import Spinner from "../../shared/Spinner";
 
 const initColumns = [
     { accessorKey: "id", header: "순번" },
@@ -24,7 +25,7 @@ const UserList = () => {
     const [searchTerm, setSearchTerm] = useState("");
     const [params, setParams] = useQueryParam();
     const [tableRows, setTableRows] = useState([]);
-    const { data } = useApiQuery(
+    const { data, isLoading, isFetching } = useApiQuery(
         ['/admin/users', params], // queryKey에 params 포함
         () => usersRequest(params)
     );
@@ -55,6 +56,7 @@ const UserList = () => {
 
     return (
         <div className="min-h-screen bg-gray-100 p-8">
+            <Spinner show={isLoading || isFetching} />
             <div className="max-w-6xl mx-auto bg-white rounded-lg shadow-md border border-gray-200">
                 {/* 헤더 및 검색 섹션 */}
                 <div className="p-6 border-b border-gray-200 flex items-center justify-between">

@@ -14,10 +14,10 @@ import useConfirm from "../../hooks/useConfirm";
 import axios from "axios";
 import {useApiMutation} from "../../hooks/useApiMutation";
 import {useApiQuery} from "../../hooks/useApiQuery";
+import Spinner from "../../shared/Spinner";
 
 const editQuizRequest = async ({ quizId, jsonData, thumbnailFile }) => {
     const formData = new FormData();
-    console.log(jsonData)
     formData.append('request', new Blob([JSON.stringify(jsonData)], { type: 'application/json' }));
     if (thumbnailFile) {
         formData.append('thumbnail', thumbnailFile);
@@ -56,7 +56,7 @@ const EditQuiz = () => {
         { content: '', answer: '' },
     ]);
 
-    const { data } = useApiQuery(
+    const { data, isLoading: isQuizLoading } = useApiQuery(
         ['quiz', quizId],
         () => quizRequest(quizId),
         {
@@ -67,14 +67,14 @@ const EditQuiz = () => {
 
     useEffect(() => {
         if (data) {
-            console.log(data);
             setQuizTitle(data.title);
             setQuizDescription(data.description);
             setPreviewUrl(data.thumbnailUrl);
             setItems(data.questions);
         }
     }, [data])
-    const { mutate: editQuizMutate } = useApiMutation(editQuizRequest, {
+
+    const { mutate: editQuizMutate, isLoading: isQuizEditLoading } = useApiMutation(editQuizRequest, {
         onSuccess: () => {
             console.log('퀴즈 수정 성공');
             openConfirm({
@@ -147,10 +147,10 @@ const EditQuiz = () => {
         const jsonData = {
             title: trimmedTitle,
             description: trimmedDescription,
-            // questions: items.map(({ content, answer }) => ({
-            //     content: content.trim(),
-            //     answer: answer.trim(),
-            // })),
+            questions: items.map(({ content, answer }) => ({
+                content: content.trim(),
+                answer: answer.trim(),
+            })),
         };
 
         editQuizMutate({
@@ -246,14 +246,15 @@ const EditQuiz = () => {
 
     return (
         <div style={f1Styles.container}>
+            <Spinner show={isQuizEditLoading || isQuizLoading} />
             <div className="container-fluid p-4" style={{ position: 'relative', zIndex: 1 }}>
                 {/* Header */}
                 <div style={{...f1Styles.header, position: 'relative', zIndex: 2}}>
                     <h1 className="mb-0" style={{ fontSize: '2.5rem', fontWeight: '700', color: '#e10600' }}>
-                        CREATE QUIZ
+                        퀴즈 수정
                     </h1>
                     <p className="mb-0 mt-2" style={{ color: '#a0a0a0', fontSize: '1.1rem' }}>
-                        Build your ultimate quiz experience
+                        최고의 퀴즈 경험을 만들어보세요
                     </p>
                 </div>
 
@@ -266,11 +267,11 @@ const EditQuiz = () => {
                                 <div style={f1Styles.card}>
                                     <div style={f1Styles.sectionTitle}>
                                         <FontAwesomeIcon icon={faListUl} className="me-2" />
-                                        Quiz Title
+                                        퀴즈 제목
                                     </div>
                                     <Form.Control
                                         type="text"
-                                        placeholder="Enter quiz title..."
+                                        placeholder="퀴즈 제목을 입력하세요."
                                         value={quizTitle}
                                         onChange={(e) => setQuizTitle(e.target.value)}
                                         style={f1Styles.input}
@@ -287,12 +288,12 @@ const EditQuiz = () => {
                             <div className="mb-4">
                                 <div style={f1Styles.card}>
                                     <div style={f1Styles.sectionTitle}>
-                                        Quiz Description
+                                        퀴즈 설명
                                     </div>
                                     <Form.Control
                                         as="textarea"
                                         rows={3}
-                                        placeholder="Describe your quiz..."
+                                        placeholder="퀴즈 설명을 입력하세요."
                                         value={quizDescription}
                                         onChange={(e) => setQuizDescription(e.target.value)}
                                         style={f1Styles.input}
@@ -310,7 +311,7 @@ const EditQuiz = () => {
                                 <div style={f1Styles.card}>
                                     <div style={f1Styles.sectionTitle}>
                                         <FontAwesomeIcon icon={faImage} className="me-2" />
-                                        Quiz Image
+                                        퀴즈 이미지
                                     </div>
                                     <div className="mb-3">
                                         <img
@@ -344,7 +345,7 @@ const EditQuiz = () => {
                                             }}
                                         >
                                             <FontAwesomeIcon icon={faImage} className="me-2" />
-                                            {quizImageFile ? 'Change Image' : 'Upload Image'}
+                                            {quizImageFile ? '이미지 변경' : '이미지 업로드'}
                                         </Button>
                                         {quizImageFile && (
                                             <Button 
@@ -387,7 +388,7 @@ const EditQuiz = () => {
                             <div style={f1Styles.questionHeader}>
                                 <div className="d-flex justify-content-between align-items-center">
                                     <h3 className="mb-0" style={{ color: '#ffffff', fontWeight: '600' }}>
-                                        QUESTIONS
+                                        문제 목록
                                     </h3>
                                     <span style={f1Styles.badge}>
                                         {items.length} / 80
@@ -399,12 +400,12 @@ const EditQuiz = () => {
                             <div className="row py-3" style={{ backgroundColor: '#252538', margin: '0' }}>
                                 <div className="col-6 text-center">
                                     <strong style={{ color: '#e10600', fontSize: '0.9rem', textTransform: 'uppercase' }}>
-                                        Question
+                                        질문
                                     </strong>
                                 </div>
                                 <div className="col-6 text-center">
                                     <strong style={{ color: '#e10600', fontSize: '0.9rem', textTransform: 'uppercase' }}>
-                                        Answer
+                                        정답
                                     </strong>
                                 </div>
                             </div>
@@ -442,7 +443,7 @@ const EditQuiz = () => {
                                         }}
                                     >
                                         <FontAwesomeIcon icon={faPlus} className="me-2" />
-                                        Add Question
+                                        질문 추가
                                     </Button>
                                 </div>
                                 
@@ -463,7 +464,7 @@ const EditQuiz = () => {
                                             }}
                                         >
                                             <FontAwesomeIcon icon={faSave} className="me-2" />
-                                            Save Quiz
+                                            저장
                                         </Button>
                                     </Col>
                                     <Col>
@@ -481,7 +482,7 @@ const EditQuiz = () => {
                                             }}
                                         >
                                             <FontAwesomeIcon icon={faTimes} className="me-2" />
-                                            Cancel
+                                            취소
                                         </Button>
                                     </Col>
                                 </Row>

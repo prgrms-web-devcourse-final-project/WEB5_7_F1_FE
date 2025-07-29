@@ -7,6 +7,7 @@ import axios from "axios";
 import NicknameForm from "../login/NicknameForm";
 import {useApiQuery} from "../../hooks/useApiQuery";
 import {useApiMutation} from "../../hooks/useApiMutation";
+import Spinner from "../../shared/Spinner";
 
 const userRequest = async () => {
   const response = await axios.get(`/user/me`);
@@ -34,11 +35,11 @@ const MyPage = () => {
   });
   const { openConfirm } = useConfirm();
   const navigate = useNavigate();
-  const { data } = useApiQuery(
+  const { data, isLoading } = useApiQuery(
       ['/user/me'],
       () => userRequest()
   );
-  const { mutate: userDeleteMutate } = useApiMutation(userDeleteRequest, {
+  const { mutate: userDeleteMutate, isLoading: isUserDeleteLoading } = useApiMutation(userDeleteRequest, {
     onSuccess: () => {
       // 회원가입 완료 후 방 목록으로 이동
       navigate("/login");
@@ -83,6 +84,7 @@ const MyPage = () => {
 
   return (
     <div className={styles.container}>
+      <Spinner show={isLoading || isUserDeleteLoading} />
       <div className={styles.backgroundPattern}></div>
       <main className={styles.main}>
         <div className={styles.card}>

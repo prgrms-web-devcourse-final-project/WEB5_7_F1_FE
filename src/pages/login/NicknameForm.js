@@ -1,10 +1,9 @@
-"use client"
-
 import { useState } from "react"
 import styles from "./Login.module.scss"
 import { isEmptyOrNull } from "../../utils/utils"
 import axios from "axios";
 import {useApiMutation} from "../../hooks/useApiMutation";
+import Spinner from "../../shared/Spinner";
 
 const checkNicknameRequest = async (nickname) => {
     const params = {
@@ -16,7 +15,7 @@ const checkNicknameRequest = async (nickname) => {
 
 const NicknameForm = ({ nickname, setNickname, error, setError, setInputStatus }) => {
     const [isChecked, setChecked] = useState(false);
-    const { mutate: checkNicknameMutate } = useApiMutation(checkNicknameRequest, {
+    const { mutate: checkNicknameMutate, isLoading } = useApiMutation(checkNicknameRequest, {
         onSuccess: () => {
             setChecked(true);
             setInputStatus((prev) => ({ ...prev, nickname: true }));
@@ -54,6 +53,7 @@ const NicknameForm = ({ nickname, setNickname, error, setError, setInputStatus }
 
     return (
         <div className={styles.formGroup}>
+            <Spinner show={isLoading} />
             <label className={styles.formLabel} htmlFor="nickname">
                 닉네임
             </label>

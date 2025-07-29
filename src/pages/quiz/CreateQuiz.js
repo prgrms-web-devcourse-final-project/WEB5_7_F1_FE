@@ -13,10 +13,10 @@ import {useNavigate} from "react-router-dom";
 import useConfirm from "../../hooks/useConfirm";
 import axios from "axios";
 import {useApiMutation} from "../../hooks/useApiMutation";
+import Spinner from "../../shared/Spinner";
 
 const createQuizRequest = async ({ jsonData, thumbnailFile }) => {
     const formData = new FormData();
-    console.log(jsonData)
     formData.append('request', new Blob([JSON.stringify(jsonData)], { type: 'application/json' }));
     formData.append('thumbnail', thumbnailFile); // 이미지 파일
     const response = await axios.post('/quizzes', formData, {
@@ -46,7 +46,7 @@ const CreateQuiz = () => {
         { content: '', answer: '' },
     ]);
 
-    const { mutate: createQuizMutate } = useApiMutation(createQuizRequest, {
+    const { mutate: createQuizMutate, isLoading } = useApiMutation(createQuizRequest, {
         onSuccess: (data) => {
             console.log('퀴즈 생성 성공:', data);
             openConfirm({
@@ -218,14 +218,15 @@ const CreateQuiz = () => {
 
     return (
         <div style={f1Styles.container}>
+            <Spinner show={isLoading} />
             <div className="container-fluid p-4" style={{ position: 'relative', zIndex: 1 }}>
                 {/* Header */}
                 <div style={{...f1Styles.header, position: 'relative', zIndex: 2}}>
                     <h1 className="mb-0" style={{ fontSize: '2.5rem', fontWeight: '700', color: '#e10600' }}>
-                        CREATE QUIZ
+                        퀴즈 생성
                     </h1>
                     <p className="mb-0 mt-2" style={{ color: '#a0a0a0', fontSize: '1.1rem' }}>
-                        Build your ultimate quiz experience
+                        최고의 퀴즈 경험을 만들어보세요
                     </p>
                 </div>
 
@@ -238,11 +239,11 @@ const CreateQuiz = () => {
                                 <div style={f1Styles.card}>
                                     <div style={f1Styles.sectionTitle}>
                                         <FontAwesomeIcon icon={faListUl} className="me-2" />
-                                        Quiz Title
+                                        퀴즈 제목
                                     </div>
                                     <Form.Control
                                         type="text"
-                                        placeholder="Enter quiz title..."
+                                        placeholder="퀴즈 제목을 입력하세요."
                                         value={quizTitle}
                                         onChange={(e) => setQuizTitle(e.target.value)}
                                         style={f1Styles.input}
@@ -259,12 +260,12 @@ const CreateQuiz = () => {
                             <div className="mb-4">
                                 <div style={f1Styles.card}>
                                     <div style={f1Styles.sectionTitle}>
-                                        Quiz Description
+                                        퀴즈 설명
                                     </div>
                                     <Form.Control
                                         as="textarea"
                                         rows={3}
-                                        placeholder="Describe your quiz..."
+                                        placeholder="퀴즈 설명을 입력하세요."
                                         value={quizDescription}
                                         onChange={(e) => setQuizDescription(e.target.value)}
                                         style={f1Styles.input}
@@ -282,7 +283,7 @@ const CreateQuiz = () => {
                                 <div style={f1Styles.card}>
                                     <div style={f1Styles.sectionTitle}>
                                         <FontAwesomeIcon icon={faImage} className="me-2" />
-                                        Quiz Image
+                                        퀴즈 이미지
                                     </div>
                                     {quizImageFile && (
                                         <div className="mb-3">
@@ -314,7 +315,7 @@ const CreateQuiz = () => {
                                             }}
                                         >
                                             <FontAwesomeIcon icon={faImage} className="me-2" />
-                                            {quizImageFile ? 'Change Image' : 'Upload Image'}
+                                            {quizImageFile ? '이미지 변경' : '이미지 업로드'}
                                         </Button>
                                         {quizImageFile && (
                                             <Button 
@@ -356,8 +357,8 @@ const CreateQuiz = () => {
                             {/* Questions Header */}
                             <div style={f1Styles.questionHeader}>
                                 <div className="d-flex justify-content-between align-items-center">
-                                    <h3 className="mb-0" style={{ color: '#ffffff', fontWeight: '600' }}>
-                                        QUESTIONS
+                                    <h3 className="mb-0" style={{ color: 'black', fontWeight: '600' }}>
+                                        문제 목록
                                     </h3>
                                     <span style={f1Styles.badge}>
                                         {items.length} / 80
@@ -369,12 +370,12 @@ const CreateQuiz = () => {
                             <div className="row py-3" style={{ backgroundColor: '#252538', margin: '0' }}>
                                 <div className="col-6 text-center">
                                     <strong style={{ color: '#e10600', fontSize: '0.9rem', textTransform: 'uppercase' }}>
-                                        Question
+                                        질문
                                     </strong>
                                 </div>
                                 <div className="col-6 text-center">
                                     <strong style={{ color: '#e10600', fontSize: '0.9rem', textTransform: 'uppercase' }}>
-                                        Answer
+                                        정답
                                     </strong>
                                 </div>
                             </div>
@@ -412,7 +413,7 @@ const CreateQuiz = () => {
                                         }}
                                     >
                                         <FontAwesomeIcon icon={faPlus} className="me-2" />
-                                        Add Question
+                                        질문 추가
                                     </Button>
                                 </div>
                                 
@@ -433,7 +434,7 @@ const CreateQuiz = () => {
                                             }}
                                         >
                                             <FontAwesomeIcon icon={faSave} className="me-2" />
-                                            Save Quiz
+                                            저장
                                         </Button>
                                     </Col>
                                     <Col>
@@ -451,7 +452,7 @@ const CreateQuiz = () => {
                                             }}
                                         >
                                             <FontAwesomeIcon icon={faTimes} className="me-2" />
-                                            Cancel
+                                            취소
                                         </Button>
                                     </Col>
                                 </Row>

@@ -1,12 +1,10 @@
-"use client"
-
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import NicknameForm from "./NicknameForm"
 import styles from "./Login.module.scss"
 import axios from "axios";
 import {useApiMutation} from "../../hooks/useApiMutation";
-import {useApiQuery} from "../../hooks/useApiQuery";
+import Spinner from "../../shared/Spinner";
 
 const signupRequest = async (nickname) => {
     const params = {
@@ -25,10 +23,8 @@ const Signup = () => {
         nickname: false,
     });
     const navigate = useNavigate();
-    const { mutate: signupMutate } = useApiMutation(signupRequest, {
-        onSuccess: (data) => {
-            console.log(data);
-            // 회원가입 완료 후 방 목록으로 이동
+    const { mutate: signupMutate, isLoading } = useApiMutation(signupRequest, {
+        onSuccess: () => {
             navigate("/room");
         },
     });
@@ -48,6 +44,7 @@ const Signup = () => {
 
     return (
         <div className={styles.signupContainer}>
+            <Spinner show={isLoading} />
             <div className={styles.signupCard}>
                 <div className={styles.signupHeader}>
                     <h1 className={styles.signupTitle}>회원가입</h1>

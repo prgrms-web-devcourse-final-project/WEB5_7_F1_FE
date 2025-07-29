@@ -52,9 +52,22 @@ const RoomList = () => {
     setRooms((prev) => {
       switch (type) {
         case 'CREATE':
+          // 이미 있는 방이면 추가하지 않음 (중복 방지)
+          if (prev.some((room) => room.roomId === payload.roomId)) {
+            return prev;
+          }
+          return [...prev, payload];
+
         case 'UPDATE':
+          return prev.map((room) =>
+              room.roomId === payload.roomId ? { ...room, ...payload } : room
+          );
+
         case 'DELETE':
+          return prev.filter((room) => room.roomId !== payload.roomId);
+
         default:
+          return prev;
       }
     });
   });

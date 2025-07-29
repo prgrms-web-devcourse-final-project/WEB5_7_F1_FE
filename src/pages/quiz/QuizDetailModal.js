@@ -3,6 +3,9 @@ import {useNavigate} from "react-router-dom";
 import useConfirm from "../../hooks/useConfirm";
 import {useApiMutation} from "../../hooks/useApiMutation";
 import axios from "axios";
+import Spinner from "../../shared/Spinner";
+import {useRecoilValue} from "recoil";
+import {loginUserAtom} from "../../state/atoms";
 
 const deleteQuizRequest = async (quizId) => {
     return  await axios.delete(`/quizzes/${quizId}`);
@@ -10,8 +13,11 @@ const deleteQuizRequest = async (quizId) => {
 
 const QuizDetailModal = ({ isOpen, onClose, quiz }) => {
     const navigate = useNavigate();
+    const loginUser = useRecoilValue(loginUserAtom);
+    console.log(quiz)
+    const isEditable = loginUser?.name === quiz?.creatorNickname;
     const { openConfirm } = useConfirm();
-    const { mutate: deleteQuizMutate } = useApiMutation(deleteQuizRequest, {
+    const { mutate: deleteQuizMutate, isLoading } = useApiMutation(deleteQuizRequest, {
         invalidateKeys: [['quizList']],
         onSuccess: () => {
             openConfirm({
@@ -36,6 +42,7 @@ const QuizDetailModal = ({ isOpen, onClose, quiz }) => {
 
     return (
         <Modal show={isOpen} centered backdrop="static">
+            <Spinner show={isLoading} />
             <Modal.Header closeButton onHide={onClose} className="border-0 pb-2">
                 <div className="w-100 d-flex justify-content-between align-items-start">
                     <Modal.Title className="fw-bold text-dark fs-4">
@@ -98,16 +105,16 @@ const QuizDetailModal = ({ isOpen, onClose, quiz }) => {
                 <span className="text-dark">
                     퀴즈 제작자 : {quiz.creatorNickname}
                 </span>
-                <Stack direction="horizontal" gap={3}>
-                    <Button 
+                {isEditable && <Stack direction="horizontal" gap={3}>
+                    <Button
                         variant="outline-primary"
                         onClick={() => navigate(`${quiz.quizId}/edit`)}
                         className="px-4 py-2 fw-medium rounded-3"
                     >
                         퀴즈 수정
                     </Button>
-                    <Button 
-                        variant="dark" 
+                    <Button
+                        variant="dark"
                         onClick={handleDeleteQuizClick}
                         className="px-4 py-2 fw-medium rounded-3"
                         style={{
@@ -117,7 +124,7 @@ const QuizDetailModal = ({ isOpen, onClose, quiz }) => {
                     >
                         퀴즈 삭제
                     </Button>
-                </Stack>
+                </Stack>}
             </Modal.Footer>
         </Modal>
     );

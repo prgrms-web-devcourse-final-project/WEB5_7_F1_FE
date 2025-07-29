@@ -40,8 +40,7 @@ export function useApiQuery(queryKey, queryFn, options = {}) {
     const defaultOnError = (error) => {
         console.error("useQuery Error :", error);
         openConfirm({
-            title: '데이터를 불러오는 중 오류가 발생했습니다.',
-            html: error.response?.data?.message || "에러: 관리자에게 문의바랍니다."
+            title: error.response?.data?.message || "에러: 관리자에게 문의바랍니다."
         });
     };
 

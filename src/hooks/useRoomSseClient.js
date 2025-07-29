@@ -14,7 +14,7 @@ export default function useRoomSseClient(onRoomEvent) {
     useEffect(() => {
         if (eventSource) return;
 
-        eventSource = new EventSource(`${process.env.REACT_APP_API_BASE_URL}/sub/room.list`);
+        eventSource = new EventSource(`${process.env.REACT_APP_API_BASE_URL}/sse/lobby`, {withCredentials: true});
 
         eventSource.onopen = () => {
             console.log('✅ SSE 연결됨');
@@ -24,6 +24,7 @@ export default function useRoomSseClient(onRoomEvent) {
         eventSource.onmessage = (event) => {
             try {
                 const payload = JSON.parse(event.data);
+                console.log(event);
                 onRoomEventRef.current?.(payload); // 예: { type: 'ROOM_CREATED', data: { ... } }
             } catch (e) {
                 console.error('❌ SSE 메시지 파싱 실패', e);
@@ -32,8 +33,8 @@ export default function useRoomSseClient(onRoomEvent) {
 
         eventSource.onerror = (err) => {
             console.error('❌ SSE 연결 오류:', err);
-            eventSource.close();
-            eventSource = null;
+            // eventSource.close();
+            // eventSource = null;
             setConnected(false);
         };
 
