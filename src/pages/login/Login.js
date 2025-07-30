@@ -11,7 +11,7 @@ const Login = () => {
         </div>
         <button className={styles.loginButton}
                 onClick={() => {
-                  window.location.href = `${process.env.REACT_APP_API_BASE_URL}/oauth2/authorization/kakao`;
+                  window.location.href = `${window.__ENV__?.REACT_APP_API_BASE_URL || "https://api-brainrace.duckdns.org"}/oauth2/authorization/kakao`;
                 }}>
           뇌이싱 입장하기
         </button>
