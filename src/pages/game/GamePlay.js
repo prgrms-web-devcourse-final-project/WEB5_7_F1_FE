@@ -4,7 +4,7 @@ import F1StartingLights from "../../layout/game/components/F1StartingLights"
 import QuizTimer from "../../layout/game/components/QuizTimer"
 import QuizQuestion from "../../layout/game/components/QuizQuestion"
 import QuizResultsModal from "../../layout/game/components/QuizResultsModal"
-import {useRecoilValue} from "recoil";
+import {useRecoilState, useRecoilValue} from "recoil";
 import {
     gameResultAtom,
     questionResultAtom,
@@ -20,10 +20,10 @@ function GamePlay() {
     const [quizStarted, setQuizStarted] = useState(false);
     const [quizCompleted, setQuizCompleted] = useState(false);
     const [showResultsModal, setShowResultsModal] = useState(false);
-    const questions = useRecoilValue(questionsAtom);
-    const currentQuestion = useRecoilValue(questionStartAtom);
-    const questionsResult = useRecoilValue(questionResultAtom);
-    const gameResult = useRecoilValue(gameResultAtom);
+    const [questions, setQuestions] = useRecoilState(questionsAtom);
+    const [currentQuestion, setCurrentQuestion] = useRecoilState(questionStartAtom);
+    const [questionsResult, setQuestionsResult] = useRecoilState(questionResultAtom);
+    const [gameResult, setGameResult] = useRecoilState(gameResultAtom);
     const [visibleQuestion, setVisibleQuestion] = useState(false);
     const [showWinnerModal, setShowWinnerModal] = useState(false);
 
@@ -80,14 +80,23 @@ function GamePlay() {
 
     useEffect(() => {
         if (quizCompleted) {
+            setCurrentQuestion(null);
+            setGameResult(null);
+            setQuestions(null);
+            setQuestionsResult(null);
+
             navigate(`/room/${roomId}`);
         }
     }, [quizCompleted])
 
     useEffect(() => {
         if (gameResult) {
-            setShowWinnerModal(false);
-            setShowResultsModal(true);
+            const timeout = setTimeout(() => {
+                setShowWinnerModal(false);
+                setShowResultsModal(true);
+            }, 3000); // 3초 (3000ms) 후 실행
+
+            return () => clearTimeout(timeout);
         }
     }, [gameResult]);
 

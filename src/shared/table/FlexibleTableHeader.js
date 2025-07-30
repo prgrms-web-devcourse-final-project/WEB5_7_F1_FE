@@ -60,8 +60,8 @@ const FlexibleTableHeader = ({ header, openColumn, handleAlign, handleSort, togg
             </div>
             {header.column.getCanResize() && (
                 <div
-                    onMouseDown={header.getResizeHandler()}
-                    onTouchStart={header.getResizeHandler()}
+                    // onMouseDown={header.getResizeHandler()}
+                    // onTouchStart={header.getResizeHandler()}
                     className={`${style.resizer} ${
                         header.column.getIsResizing() ? style.isResizing : ''
                     }`}

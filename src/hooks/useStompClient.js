@@ -125,5 +125,6 @@ export default function useStompClient(roomId, onMessage) {
     return {
         sendMessage: activeSendMessage, // 처음엔 null, 연결 완료되면 함수
         ready,
+        disconnect: () => stompClient?.deactivate(),
     };
 }

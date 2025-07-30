@@ -12,6 +12,7 @@ import axios from "axios";
 import {useApiMutation} from "../../hooks/useApiMutation";
 import {useNavigate} from "react-router-dom";
 import useRoomSseClient from "../../hooks/useRoomSseClient";
+import Spinner from "../../shared/Spinner";
 
 const roomsRequest = async () => {
   const response = await axios.get(`/rooms`);
@@ -32,7 +33,6 @@ const RoomList = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [rooms, setRooms] = useState([]);
-  const [filteredRooms, setFilteredRooms] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isFullModalOpen, setIsFullModalOpen] = useState(false);
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
@@ -41,30 +41,29 @@ const RoomList = () => {
   const navigate = useNavigate();
   const ROOMS_PER_PAGE = 8 // 한 페이지당 8개
 
-  const { data, refetch } = useApiQuery(
+  const { data, isLoading } = useApiQuery(
       ["rooms"],
       () => roomsRequest(),
   );
 
   useRoomSseClient((event) => {
     const { type, payload } = event;
-  console.log(type, payload)
     setRooms((prev) => {
       switch (type) {
         case 'CREATE':
           // 이미 있는 방이면 추가하지 않음 (중복 방지)
-          if (prev.some((room) => room.roomId === payload.roomId)) {
+          if (prev.some((room) => room.roomId === payload.payload.roomId)) {
             return prev;
           }
-          return [...prev, payload];
+          return [...prev, payload.payload];
 
         case 'UPDATE':
           return prev.map((room) =>
-              room.roomId === payload.roomId ? { ...room, ...payload } : room
+              room.roomId === payload.payload.roomId ? { ...room, ...payload.payload } : room
           );
 
         case 'DELETE':
-          return prev.filter((room) => room.roomId !== payload.roomId);
+          return prev.filter((room) => room.roomId !== payload.payload.roomId);
 
         default:
           return prev;
@@ -72,13 +71,13 @@ const RoomList = () => {
     });
   });
 
-  const { mutate: createRoomMutate } = useApiMutation(createRoomRequest, {
+  const { mutate: createRoomMutate, isLoading: isCreateRoomLoading } = useApiMutation(createRoomRequest, {
     onSuccess: (data) => {
       navigate(`/room/${data.roomId}`);
     },
   });
 
-  const { mutate: enterRoomMutate } = useApiMutation(enterRoomRequest, {
+  const { mutate: enterRoomMutate, isLoading: isEnterRoomLoading } = useApiMutation(enterRoomRequest, {
     onSuccess: (data, variables) => {
       // 임시로 그냥 모달 닫고 입장했다고 가정
       setIsPasswordModalOpen(false);
@@ -90,7 +89,6 @@ const RoomList = () => {
   useEffect(() => {
     if (data) {
       setRooms(data.rooms);
-      setFilteredRooms(data.rooms);
     }
   }, [data])
 
@@ -104,15 +102,14 @@ const RoomList = () => {
   }, []);
 
   const handleSearch = () => {
-    const filtered = rooms.filter((room) => room.roomName.toLowerCase().includes(searchTerm.toLowerCase()));
-    setFilteredRooms(filtered);
+    setRooms((prev) => prev.filter((room) => room.roomName.toLowerCase().includes(searchTerm.toLowerCase())));
     setCurrentPage(1); // 검색 시 첫 페이지로 이동
     setSearchOn(true);
   }
 
   const handleReset = () => {
     setSearchTerm('');
-    setFilteredRooms(rooms);
+    setRooms(data.rooms);
     setCurrentPage(1); // 검색 시 첫 페이지로 이동
     setSearchOn(false);
   };
@@ -142,16 +139,17 @@ const RoomList = () => {
   }
 
   // 현재 페이지에 표시할 방들 계산
-  const totalPages = Math.ceil(filteredRooms.length / ROOMS_PER_PAGE)
+  const totalPages = Math.ceil(rooms.length / ROOMS_PER_PAGE)
   const startIndex = (currentPage - 1) * ROOMS_PER_PAGE
   const endIndex = startIndex + ROOMS_PER_PAGE
-  const currentRooms = filteredRooms.slice(startIndex, endIndex)
+  const currentRooms = rooms.slice(startIndex, endIndex)
 
   // 빈 카드로 채우기 (레이아웃 안정화를 위해)
   const emptyCards = Array(Math.max(0, ROOMS_PER_PAGE - currentRooms.length)).fill(null)
 
   return (
     <div className={styles.mainContainer}>
+      <Spinner show={isLoading || isEnterRoomLoading || isCreateRoomLoading} />
       {/* Main Content */}
       <main className={styles.mainContent}>
         {/* Search Section */}
@@ -188,7 +186,7 @@ const RoomList = () => {
         {searchTerm && searchOn && (
           <div className={styles.searchInfo}>
             <p>
-              "{searchTerm}" 검색 결과: {filteredRooms.length}개의 방
+              "{searchTerm}" 검색 결과: {rooms.length}개의 방
             </p>
           </div>
         )}
@@ -205,13 +203,13 @@ const RoomList = () => {
         </section>
 
         {/* 검색 결과가 없을 때 */}
-        {filteredRooms.length === 0 && searchTerm && (
+        {rooms.length === 0 && searchTerm && (
           <div className={styles.noResults}>
             <p>검색 결과가 없습니다.</p>
             <button
               onClick={() => {
                 setSearchTerm("")
-                setFilteredRooms(dummyRooms)
+                setRooms(data.rooms)
                 setCurrentPage(1)
               }}
             >

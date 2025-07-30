@@ -25,6 +25,7 @@ const rankRequest = async (params) => {
 const Rank = () => {
   const [keyword, setKeyword] = useState("");
   const [tableRows, setTableRows] = useState([]);
+  const [tablePages, setTablePages] = useState({ currentPage: 1, totalPages: 1 });
   const [params, setParams] = useQueryParam();
   const { data, isLoading, isFetching } = useApiQuery(
       ['/stats/rankings', params], // queryKey에 params 포함
@@ -42,6 +43,10 @@ const Rank = () => {
         }
       })
       setTableRows(processedRows);
+      setTablePages({
+        currentPage: data.currentPage,
+        totalPages: data.totalPages
+      })
     }
   }, [data])
 
@@ -107,7 +112,7 @@ const Rank = () => {
           </TableBackGroundCard>
           
           {/* Pagination */}
-          <PaginationNavigator currentPage={data?.currentPage} totalPages={data?.totalPages}
+          <PaginationNavigator currentPage={tablePages.currentPage} totalPages={tablePages.totalPages}
                                onPageChange={(page) => setParams({
                                  ...params
                                  ,page: page,

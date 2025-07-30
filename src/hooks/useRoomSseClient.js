@@ -21,15 +21,20 @@ export default function useRoomSseClient(onRoomEvent) {
             setConnected(true);
         };
 
-        eventSource.onmessage = (event) => {
+        const handleEvent = (type) => (event) => {
             try {
                 const payload = JSON.parse(event.data);
-                console.log(event);
-                onRoomEventRef.current?.(payload); // 예: { type: 'ROOM_CREATED', data: { ... } }
+                console.log(`📨 ${type} 이벤트 수신:`, payload);
+                onRoomEventRef.current?.({ type, payload });
             } catch (e) {
-                console.error('❌ SSE 메시지 파싱 실패', e);
+                console.error(`❌ ${type} 이벤트 파싱 실패`, e);
             }
         };
+
+        // 🎯 각각의 이벤트 타입 등록
+        eventSource.addEventListener('CREATE', handleEvent('CREATE'));
+        eventSource.addEventListener('UPDATE', handleEvent('UPDATE'));
+        eventSource.addEventListener('DELETE', handleEvent('DELETE'));
 
         eventSource.onerror = (err) => {
             console.error('❌ SSE 연결 오류:', err);

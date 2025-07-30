@@ -5,7 +5,7 @@ import styles from './room.module.scss';
 const RoomCard = ({ room, onEnterRoom }) => {
   const isFullRoom = room.currentUserCount >= room.maxUserCount;
   const isPrivate = room.locked;
-
+console.log(room);
   const handleEnterRoom = () => {
     if (!isFullRoom && onEnterRoom) {
       onEnterRoom(room);
@@ -15,7 +15,7 @@ const RoomCard = ({ room, onEnterRoom }) => {
   return (
     <div className={styles.quizCard} onClick={handleEnterRoom}>
       <div className={styles.hoverCard}>
-        <h3>{room.roomName}</h3>
+        <h3>{room.quizTitle}</h3>
         <p>{room.description}</p>
         <p>제작자: {room.creator}</p>
         <p>총 문제: {room.numberOfQuestions} 문제</p>
@@ -31,7 +31,7 @@ const RoomCard = ({ room, onEnterRoom }) => {
       </div>
       
       <div className={styles.quizInfo}>
-        <h3 className={styles.quizTitle}>{room.title}</h3>
+        <h3 className={styles.quizTitle}>{room.roomName}</h3>
         <div className={styles.quizStats}>
           <span className={`${styles.quizParticipants} ${isFullRoom ? styles.full : ''}`}>
             인원: {room.currentUserCount} / {room.maxUserCount}

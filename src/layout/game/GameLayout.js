@@ -112,6 +112,7 @@ const GameLayout = () => {
                 setGameResult(payload.message.result);
                 break;
             case "EXIT_SUCCESS":
+                disconnect();
                 navigate("/room");
                 break;
             default:
@@ -119,7 +120,7 @@ const GameLayout = () => {
         }
     }, [setPlayerList, setRoomSetting, setGameSetting, setSystemNotice, setChat]);
 
-    const { sendMessage } = useStompClient(roomId, handleStompMessage);
+    const { sendMessage, disconnect } = useStompClient(roomId, handleStompMessage);
 
     useEffect(() => {
         if (sendMessage) {

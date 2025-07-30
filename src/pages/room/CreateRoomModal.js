@@ -2,12 +2,14 @@
 
 import { useState } from "react"
 import styles from "./room.module.scss"
+import useConfirm from "../../hooks/useConfirm";
 
 const CreateRoomModal = ({ isOpen, onClose, onSubmit }) => {
   const [roomName, setRoomName] = useState("")
   const [maxUserCount, setMaxUserCount] = useState("2")
   const [locked, setLocked] = useState(false)
-  const [password, setPassword] = useState("")
+  const [password, setPassword] = useState("");
+  const {openConfirm} = useConfirm();
 
   const handlePasswordChange = (e) => {
     setPassword(e.target.value)
@@ -22,6 +24,12 @@ const CreateRoomModal = ({ isOpen, onClose, onSubmit }) => {
   }
 
   const handleSubmit = () => {
+    if (locked && !password.trim()) {
+      openConfirm({
+        title: "비밀번호를 입력 하세요"
+      });
+      return;
+    }
     // 방 생성 로직
     onSubmit({ roomName, maxUserCount, locked, password });
     onClose();

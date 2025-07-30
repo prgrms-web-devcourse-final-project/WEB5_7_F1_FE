@@ -158,7 +158,7 @@ const QuizList = () => {
                         }
                         return rows;
                     }, []).map((rowItems, rowIndex) => (
-                        <Row key={rowIndex} className="mb-4 g-4 justify-content-center">
+                        <Row key={rowIndex} className="mb-4 g-4 justify-content-start">
                             {rowItems.map((quiz, colIndex) => (
                                 <Col key={colIndex} xl={3} lg={4} md={6} sm={12} className="d-flex justify-content-center">
                                     <QuizCard 
