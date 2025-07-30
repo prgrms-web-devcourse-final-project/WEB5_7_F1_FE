@@ -75,13 +75,14 @@ function ChatSection() {
           <div className="flex-1 min-h-0 p-4 overflow-y-auto space-y-2">
               {messages.map((msg) => (
                   msg.type === "chat" ? (
-                      <div key={msg.id} className="flex items-start space-x-3">
-                          <Car className={`w-5 h-5 mt-0.5 ${msg.color ?? "text-gray-500"}`} />
-                          <div>
+                      <div key={msg.id} className="flex items-start space-x-3 w-full min-w-0">
+                          <Car className="w-5 h-5 mt-0.5 flex-shrink-0 text-red-500" />
+                          <div className="w-full min-w-0">
                               <div className="text-sm font-medium text-gray-600">{msg.nickname}</div>
-                              <div className="text-sm text-gray-800">{msg.message}</div>
+                              <div className="text-sm text-gray-800 break-words">{msg.message}</div>
                           </div>
                       </div>
+
                   ) : (
                       <div key={msg.id} className="flex items-start space-x-3">
                           <Bell className="w-5 h-5 mt-0.5 text-gray-500" />
@@ -100,6 +101,7 @@ function ChatSection() {
                   <input
                       type="text"
                       placeholder="메시지를 입력하세요..."
+                      maxLength={100}
                       value={chatMessage}
                       onChange={(e) => setChatMessage(e.target.value)}
                       onKeyPress={(e) => e.key === "Enter" && handleSendMessage()}
