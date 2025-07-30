@@ -14,7 +14,7 @@ export default function useRoomSseClient(onRoomEvent) {
     useEffect(() => {
         if (eventSource) return;
 
-        eventSource = new EventSource(`${process.env.REACT_APP_API_BASE_URL}/sse/lobby`, {withCredentials: true});
+        eventSource = new EventSource(`${window.__ENV__?.REACT_APP_API_BASE_URL || "https://api-brainrace.duckdns.org"}/sse/lobby`, {withCredentials: true});
 
         eventSource.onopen = () => {
             console.log('✅ SSE 연결됨');
