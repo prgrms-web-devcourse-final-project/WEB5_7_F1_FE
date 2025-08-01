@@ -15,7 +15,7 @@ function QuizInfoCard({ gameSetting }) {
         <div className="relative">
           <img
             className="w-full h-64 object-cover rounded-xl"
-            src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=256&fit=crop"
+            src={gameSetting?.quiz.thumbnailUrl}
             alt="F1 race car on track with checkered flag"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent rounded-xl"></div>

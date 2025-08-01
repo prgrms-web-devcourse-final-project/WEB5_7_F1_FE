@@ -14,6 +14,7 @@ fs.writeFileSync(path.join(__dirname, 'build', 'env.js'), envFileContent);
 
 // 정적 파일 제공 (build 디렉토리)
 app.use(express.static(path.join(__dirname, 'build')));
+app.use("/images", express.static(path.join(__dirname, "public/images")));
 
 // SPA 라우팅 대응: 나머지 요청은 index.html로
 app.get('*', (req, res) => {
