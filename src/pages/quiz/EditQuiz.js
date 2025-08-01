@@ -20,7 +20,7 @@ const editQuizRequest = async ({ quizId, jsonData, thumbnailFile }) => {
     const formData = new FormData();
     formData.append('request', new Blob([JSON.stringify(jsonData)], { type: 'application/json' }));
     if (thumbnailFile) {
-        formData.append('thumbnail', thumbnailFile);
+        formData.append('thumbnailFile', thumbnailFile);
     }
     const response = await axios.put(`/quizzes/${quizId}`, formData, {
         headers: {
