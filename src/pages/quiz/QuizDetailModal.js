@@ -48,7 +48,7 @@ const QuizDetailModal = ({ isOpen, onClose, quiz }) => {
                     <Modal.Title className="fw-bold text-dark fs-4">
                          {quiz.title} 
                     </Modal.Title>
-                    <span className="text-muted">
+                    <span className="text-muted fs-6">
                         총 문제 수 : {quiz.numberOfQuestion} (개)
                     </span>
                 </div>
@@ -56,73 +56,91 @@ const QuizDetailModal = ({ isOpen, onClose, quiz }) => {
             
             <Modal.Body className="px-4 py-3">
                 {/* 퀴즈 설명 박스 */}
-                <div 
-                    className="border rounded-3 p-4 mb-4 bg-light"
-                    style={{
-                        minHeight: '120px',
-                        borderColor: '#dee2e6'
-                    }}
-                >
-                    <div className="text-center text-muted mb-3 fw-medium">
+                <div className="mb-4">
+                    <div 
+                        className="text-muted mb-2 fw-medium d-flex align-items-center"
+                        style={{ fontSize: '0.9rem' }}
+                    >
+                        <span className="me-2">📝</span>
                         퀴즈 설명
                     </div>
-                    <div className="text-dark text-center">
-                        {quiz.description}
+                    <div 
+                        className="border rounded-3 p-3 bg-white"
+                        style={{
+                            minHeight: '80px',
+                            borderColor: '#e9ecef',
+                            backgroundColor: '#f8f9fa !important'
+                        }}
+                    >
+                        <div className="text-dark" style={{ lineHeight: '1.5' }}>
+                            {quiz.description || '설명이 없습니다.'}
+                        </div>
                     </div>
                 </div>
 
                 {/* 퀴즈 썸네일 박스 */}
-                <div 
-                    className="border rounded-3 p-4 bg-light d-flex flex-column align-items-center justify-content-center"
-                    style={{
-                        minHeight: '200px',
-                        borderColor: '#dee2e6'
-                    }}
-                >
-                    <div className="text-center text-muted mb-3 fw-medium">
+                <div>
+                    <div 
+                        className="text-muted mb-2 fw-medium d-flex align-items-center"
+                        style={{ fontSize: '0.9rem' }}
+                    >
+                        <span className="me-2">🖼️</span>
                         퀴즈 썸네일
                     </div>
-                    {quiz.thumbnailUrl ? (
-                        <Image 
-                            src={quiz.thumbnailUrl} 
-                            alt="퀴즈 썸네일"
-                            className="rounded"
-                            style={{
-                                maxWidth: '150px',
-                                maxHeight: '150px',
-                                objectFit: 'cover'
-                            }}
-                        />
-                    ) : (
-                        <div className="text-muted" style={{fontSize: '3rem'}}>
-                            📄
-                        </div>
-                    )}
+                    <div 
+                        className="border rounded-3 p-3 bg-white d-flex flex-column align-items-center justify-content-center"
+                        style={{
+                            minHeight: '160px',
+                            borderColor: '#e9ecef',
+                            backgroundColor: '#f8f9fa !important'
+                        }}
+                    >
+                        {quiz.thumbnailUrl ? (
+                            <Image 
+                                src={quiz.thumbnailUrl} 
+                                alt="퀴즈 썸네일"
+                                className="rounded shadow-sm"
+                                style={{
+                                    maxWidth: '120px',
+                                    maxHeight: '120px',
+                                    objectFit: 'cover'
+                                }}
+                            />
+                        ) : (
+                            <div className="text-center">
+                                <div className="text-muted mb-2" style={{fontSize: '2.5rem'}}>
+                                    📄
+                                </div>
+                                <small className="text-muted">썸네일이 없습니다</small>
+                            </div>
+                        )}
+                    </div>
                 </div>
             </Modal.Body>
             
             <Modal.Footer className="border-0 d-flex justify-content-between align-items-center pt-2">
-                <span className="text-dark">
-                    퀴즈 제작자 : {quiz.creatorNickname}
-                </span>
-                {isEditable && <Stack direction="horizontal" gap={3}>
+                <div className="d-flex align-items-center">
+                    <span className="text-muted me-2" style={{ fontSize: '0.9rem' }}>👤</span>
+                    <span className="text-dark fw-medium">
+                        {quiz.creatorNickname}
+                    </span>
+                </div>
+                {isEditable && <Stack direction="horizontal" gap={2}>
                     <Button
                         variant="outline-primary"
                         onClick={() => navigate(`${quiz.quizId}/edit`)}
-                        className="px-4 py-2 fw-medium rounded-3"
+                        className="px-3 py-2 fw-medium rounded-3"
+                        style={{ fontSize: '0.9rem' }}
                     >
-                        퀴즈 수정
+                        수정
                     </Button>
                     <Button
-                        variant="dark"
+                        variant="danger"
                         onClick={handleDeleteQuizClick}
-                        className="px-4 py-2 fw-medium rounded-3"
-                        style={{
-                            backgroundColor: '#ff1e1e',
-                            borderColor: '#ff1e1e'
-                        }}
+                        className="px-3 py-2 fw-medium rounded-3"
+                        style={{ fontSize: '0.9rem' }}
                     >
-                        퀴즈 삭제
+                        삭제
                     </Button>
                 </Stack>}
             </Modal.Footer>

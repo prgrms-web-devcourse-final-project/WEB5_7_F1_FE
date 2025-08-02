@@ -7,10 +7,10 @@ import FullPersonModal from "./FullPersonModal"
 import RoomPasswordModal from "./RoomPasswordModal"
 import styles from "./room.module.scss"
 import PaginationNavigator from "../../layout/PaginationNavigator.js"
-import {useApiQuery} from "../../hooks/useApiQuery";
+import { useApiQuery } from "../../hooks/useApiQuery";
 import axios from "axios";
-import {useApiMutation} from "../../hooks/useApiMutation";
-import {useNavigate} from "react-router-dom";
+import { useApiMutation } from "../../hooks/useApiMutation";
+import { useNavigate } from "react-router-dom";
 import useRoomSseClient from "../../hooks/useRoomSseClient";
 import Spinner from "../../shared/Spinner";
 
@@ -25,46 +25,42 @@ const createRoomRequest = async (params) => {
 }
 
 const enterRoomRequest = async (params) => {
-  const response = await axios.post(`/rooms/enterRoom`, params, {skipAuthInterceptor: true});
+  const response = await axios.post(`/rooms/enterRoom`, params, { skipAuthInterceptor: true });
   return response.data;
 }
 
 const RoomList = () => {
   const [searchTerm, setSearchTerm] = useState("");
+  const [appliedSearchTerm, setAppliedSearchTerm] = useState(""); // 실제 적용된 검색어
   const [currentPage, setCurrentPage] = useState(1);
-  const [rooms, setRooms] = useState([]);
+  const [allRooms, setAllRooms] = useState([]); // 원본 데이터
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isFullModalOpen, setIsFullModalOpen] = useState(false);
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
   const [selectedRoom, setSelectedRoom] = useState(null);
-  const [searchOn, setSearchOn] = useState(false);
   const navigate = useNavigate();
-  const ROOMS_PER_PAGE = 8 // 한 페이지당 8개
+  const ROOMS_PER_PAGE = 8; // 한 페이지에 방 하나
 
   const { data, isLoading } = useApiQuery(
-      ["rooms"],
-      () => roomsRequest(),
+    ["rooms"],
+    () => roomsRequest(),
   );
 
   useRoomSseClient((event) => {
     const { type, payload } = event;
-    setRooms((prev) => {
+    setAllRooms((prev) => {
       switch (type) {
         case 'CREATE':
-          // 이미 있는 방이면 추가하지 않음 (중복 방지)
           if (prev.some((room) => room.roomId === payload.payload.roomId)) {
             return prev;
           }
           return [...prev, payload.payload];
-
         case 'UPDATE':
           return prev.map((room) =>
-              room.roomId === payload.payload.roomId ? { ...room, ...payload.payload } : room
+            room.roomId === payload.payload.roomId ? { ...room, ...payload.payload } : room
           );
-
         case 'DELETE':
           return prev.filter((room) => room.roomId !== payload.payload.roomId);
-
         default:
           return prev;
       }
@@ -79,7 +75,6 @@ const RoomList = () => {
 
   const { mutate: enterRoomMutate, isLoading: isEnterRoomLoading } = useApiMutation(enterRoomRequest, {
     onSuccess: (data, variables) => {
-      // 임시로 그냥 모달 닫고 입장했다고 가정
       setIsPasswordModalOpen(false);
       setSelectedRoom(null);
       navigate(`/room/${variables.roomId}`);
@@ -88,9 +83,9 @@ const RoomList = () => {
 
   useEffect(() => {
     if (data) {
-      setRooms(data.rooms);
+      setAllRooms(data.rooms);
     }
-  }, [data])
+  }, [data]);
 
   useEffect(() => {
     // prefix로 저장된 방 관련 키들 삭제
@@ -101,18 +96,34 @@ const RoomList = () => {
     });
   }, []);
 
+  // 필터링: 적용된 검색어 기준
+  const filteredRooms = appliedSearchTerm
+    ? allRooms.filter((room) => room.roomName.toLowerCase().includes(appliedSearchTerm.toLowerCase()))
+    : allRooms;
+
+  // 페이지 계산
+  const totalPages = Math.ceil(filteredRooms.length / ROOMS_PER_PAGE);
+  const startIndex = (currentPage - 1) * ROOMS_PER_PAGE;
+  const currentRooms = filteredRooms.slice(startIndex, startIndex + ROOMS_PER_PAGE);
+
+  // currentPage가 너무 크면 자동 보정
+  useEffect(() => {
+    if (currentPage > totalPages) {
+      setCurrentPage(Math.max(1, totalPages));
+    }
+  }, [totalPages, currentPage]);
+
   const handleSearch = () => {
-    setRooms((prev) => prev.filter((room) => room.roomName.toLowerCase().includes(searchTerm.toLowerCase())));
-    setCurrentPage(1); // 검색 시 첫 페이지로 이동
-    setSearchOn(true);
+    setCurrentPage(1);
+    const trimmed = searchTerm.trim();
+    setAppliedSearchTerm(trimmed); // 빈 문자열이면 전체 목록
   }
 
   const handleReset = () => {
     setSearchTerm('');
-    setRooms(data.rooms);
-    setCurrentPage(1); // 검색 시 첫 페이지로 이동
-    setSearchOn(false);
-  };
+    setAppliedSearchTerm('');
+    setCurrentPage(1);
+  }
 
   const handleCreateRoom = (newRoomData) => {
     createRoomMutate(newRoomData);
@@ -122,9 +133,9 @@ const RoomList = () => {
   const handleEnterRoom = (room) => {
     if (room.locked) {
       setSelectedRoom(room);
-      setIsPasswordModalOpen(true)
+      setIsPasswordModalOpen(true);
     } else {
-      enterRoomMutate({ roomId: room.roomId, password: "" })
+      enterRoomMutate({ roomId: room.roomId, password: "" });
     }
   }
 
@@ -132,45 +143,39 @@ const RoomList = () => {
     enterRoomMutate({ roomId: room.roomId, password: password });
   }
 
-  const handleKeyPress = (e) => {
+  const handleKeyDown = (e) => {
     if (e.key === "Enter") {
-      handleSearch()
+      e.preventDefault();
+      handleSearch();
     }
   }
 
-  // 현재 페이지에 표시할 방들 계산
-  const totalPages = Math.ceil(rooms.length / ROOMS_PER_PAGE)
-  const startIndex = (currentPage - 1) * ROOMS_PER_PAGE
-  const endIndex = startIndex + ROOMS_PER_PAGE
-  const currentRooms = rooms.slice(startIndex, endIndex)
-
-  // 빈 카드로 채우기 (레이아웃 안정화를 위해)
-  const emptyCards = Array(Math.max(0, ROOMS_PER_PAGE - currentRooms.length)).fill(null)
+  // 빈 카드 채우기 (한 페이지당 1개라 필요 없으면 제거 가능)
+  const emptyCards = Array(Math.max(0, ROOMS_PER_PAGE - currentRooms.length)).fill(null);
 
   return (
     <div className={styles.mainContainer}>
       <Spinner show={isLoading || isEnterRoomLoading || isCreateRoomLoading} />
-      {/* Main Content */}
       <main className={styles.mainContent}>
         {/* Search Section */}
         <section className={styles.searchSection}>
           <div className={styles.searchInputGroup}>
             <div className={styles.searchInputWrapper}>
               <input
-                  type="text"
-                  className={styles.searchInput}
-                  placeholder="방 제목을 입력하세요..."
-                  value={searchTerm}
-                  onChange={(e) => {
-                    setSearchTerm(e.target.value);
-                    setSearchOn(false);
-                  }}
-                  onKeyPress={handleKeyPress}
+                type="text"
+                className={styles.searchInput}
+                placeholder="방 제목을 입력하세요..."
+                value={searchTerm}
+                onChange={(e) => {
+                  setSearchTerm(e.target.value);
+                  // appliedSearchTerm은 Enter(검색)할 때만 바뀜
+                }}
+                onKeyDown={handleKeyDown}
               />
               {searchTerm && (
-                  <button className={styles.clearButton} onClick={handleReset}>
-                    ✕
-                  </button>
+                <button className={styles.clearButton} onClick={handleReset}>
+                  ✕
+                </button>
               )}
             </div>
             <button className={styles.searchButton} onClick={handleSearch}>
@@ -183,34 +188,31 @@ const RoomList = () => {
         </section>
 
         {/* 검색 결과 정보 */}
-        {searchTerm && searchOn && (
+        {appliedSearchTerm && (
           <div className={styles.searchInfo}>
             <p>
-              "{searchTerm}" 검색 결과: {rooms.length}개의 방
+              "{appliedSearchTerm}" 검색 결과: {filteredRooms.length}개의 방
             </p>
           </div>
         )}
 
-        {/* Quiz Grid */}
+        {/* Room Grid (한 페이지당 하나) */}
         <section className={styles.quizGrid}>
           {currentRooms.map((room) => (
-            <RoomCard key={room.id} room={room} onEnterRoom={handleEnterRoom} />
+            <RoomCard key={room.roomId} room={room} onEnterRoom={handleEnterRoom} />
           ))}
-          {/* 빈 공간을 채우는 투명한 div들 */}
           {emptyCards.map((_, index) => (
             <div key={`empty-${index}`} style={{ visibility: "hidden" }}></div>
           ))}
         </section>
 
         {/* 검색 결과가 없을 때 */}
-        {rooms.length === 0 && searchTerm && (
+        {filteredRooms.length === 0 && appliedSearchTerm && (
           <div className={styles.noResults}>
             <p>검색 결과가 없습니다.</p>
             <button
               onClick={() => {
-                setSearchTerm("")
-                setRooms(data.rooms)
-                setCurrentPage(1)
+                handleReset();
               }}
             >
               전체 방 보기
