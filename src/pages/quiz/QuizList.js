@@ -45,13 +45,23 @@ const QuizList = () => {
 
     // 검색 기능 구현
     const handleSearch = () => {
-        if (isEmptyOrNull(keyword.trim())) { return; }
-        if (selectedSearchType.value === 'title') {
-            setQueryParams({ title: keyword, page: 1, size: 8, creator: '' });
-        } else {
-            setQueryParams({ title: '', page: 1, size: 8, creator: keyword });
-        }
-    };
+    const trimmed = keyword.trim();
+    if (isEmptyOrNull(trimmed)) {
+        // 빈 검색어면 1페이지, 전체 목록으로 되돌림
+        setQueryParams({
+            page: 1,
+            size: 8,
+            title: '',
+            creator: '',
+        });
+        return;
+    }
+    if (selectedSearchType.value === 'title') {
+        setQueryParams({ title: trimmed, page: 1, size: 8, creator: '' });
+    } else {
+        setQueryParams({ title: '', page: 1, size: 8, creator: trimmed });
+    }
+};
 
     // 검색 버튼 클릭 이벤트
     const handleSearchClick = (e) => {
@@ -60,12 +70,31 @@ const QuizList = () => {
         handleSearch();
     };
 
-    // 엔터키 이벤트 처리
+    // 엔터키 이벤트 처리 - IME 처리 추가
     const handleKeyDown = (e) => {
         if (e.key === "Enter") {
             e.preventDefault();
-            handleSearch();
+            // IME 조합 중이 아닐 때만 검색 실행
+            if (!e.target.composing) {
+                handleSearch();
+            }
         }
+    };
+
+    // 한글 입력 처리
+    const handleCompositionStart = (e) => {
+        e.target.composing = true;
+    };
+
+    const handleCompositionEnd = (e) => {
+        e.target.composing = false;
+        // 조합이 끝난 후에는 별도 처리 없이 onChange가 자동으로 처리
+    };
+
+    // 입력값 변경 처리
+    const handleInputChange = (e) => {
+        // 입력값은 항상 업데이트 (사용자가 입력하는 것을 볼 수 있도록)
+        setKeyword(e.target.value);
     };
 
     // 퀴즈 카드 클릭 이벤트
@@ -93,7 +122,6 @@ const QuizList = () => {
             title: '',
             creator: '',
         });
-        // setSearchOn(false);
     };
 
     return (
@@ -115,8 +143,10 @@ const QuizList = () => {
                                     type="text"
                                     placeholder="검색어를 입력하세요..."
                                     value={keyword}
-                                    onChange={(e) => setKeyword(e.target.value)}
+                                    onChange={handleInputChange}
                                     onKeyDown={handleKeyDown}
+                                    onCompositionStart={handleCompositionStart}
+                                    onCompositionEnd={handleCompositionEnd}
                                     className={`flex-fill ${styles.searchInput}`}
                                 />
                                 {keyword && (
@@ -150,7 +180,7 @@ const QuizList = () => {
             )}
 
             {/* 퀴즈 카드 그리드 */}
-            {data?.quiz.length > 0 ? (
+            {data?.quiz?.length > 0 ? (
                 <div className="mb-5">
                     {data?.quiz.reduce((rows, _, index, arr) => {
                         if (index % 4 === 0) {
@@ -182,6 +212,7 @@ const QuizList = () => {
                     <Button 
                         variant="outline-primary" 
                         onClick={() => {
+                            setKeyword('');
                             setQueryParams({ title: '', page: 1, size: 8, creator: '' });
                         }}
                         style={{
@@ -196,11 +227,12 @@ const QuizList = () => {
                     </Button>
                 </div>
             )}
-                  <PaginationNavigator
+            
+            <PaginationNavigator
                 currentPage={data?.currentPage}
                 totalPages={data?.totalPages}
                 onPageChange={handlePageChange}
-                />
+            />
 
             {/* 퀴즈 상세 모달 */}
             <QuizDetailModal 

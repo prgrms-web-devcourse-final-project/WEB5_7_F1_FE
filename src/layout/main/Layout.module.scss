@@ -12,3 +12,16 @@
   overflow: hidden;             // 넘치는 부분 숨김
 }
 
+html {
+  scrollbar-gutter: stable;
+}
+
+body {
+  overflow-y: scroll; /* 스크롤바를 항상 보이게 해서 너비 변화 없음 */
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
