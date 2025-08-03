@@ -57,6 +57,9 @@ const GameLayout = () => {
 
   const { isLoading, data } = useApiQuery(['authme'], () => authMeRequest());
 
+  const missedHeartbeatCount = useRef(0);
+  const heartbeatCheckTimer = useRef(null);
+
   useEffect(() => {
     if (data) {
       setLoginUser(data);
@@ -65,6 +68,9 @@ const GameLayout = () => {
 
   const disconnectRef = useRef(null);
   const ignorePopState = useRef(false);
+
+
+
 
   const handleStompMessage = useCallback(
     (payload) => {
@@ -120,7 +126,14 @@ const GameLayout = () => {
           if (disconnectRef.current) {
             disconnectRef.current();
           }
+          localStorage.removeItem(`enteredRoom_${roomId}`);
           navigate('/room');
+          break;
+        case 'HEARTBEAT':
+          if (sendMessageRef.current) {
+            sendMessageRef.current(`/pub/heartbeat/pong`, '');
+          }
+          missedHeartbeatCount.current = 0;
           break;
         default:
           console.warn('알 수 없는 메시지', payload);
@@ -141,10 +154,38 @@ const GameLayout = () => {
     ],
   );
 
+
   const { sendMessage, disconnect } = useStompClient(
-    roomId,
-    handleStompMessage,
+      roomId,
+      handleStompMessage,
   );
+
+  const sendMessageRef = useRef(null);
+
+  useEffect(() => {
+    heartbeatCheckTimer.current = setInterval(() => {
+      missedHeartbeatCount.current += 1;
+
+      if (missedHeartbeatCount.current >= 3) {
+        if (disconnectRef.current) {
+          disconnectRef.current(); // stompClient.deactivate()
+          localStorage.removeItem(`enteredRoom_${roomId}`);
+          navigate('/room');
+        }
+
+        clearInterval(heartbeatCheckTimer.current); // 더 이상 체크 안 해도 됨
+      }
+    }, 15000); // 서버 heartbeat 간격과 일치 (15초)
+
+    return () => {
+      clearInterval(heartbeatCheckTimer.current);
+    };
+  }, []);
+
+
+  useEffect(() => {
+    sendMessageRef.current = sendMessage;
+  }, [sendMessage]);
 
   useEffect(() => {
     disconnectRef.current = disconnect;
@@ -174,6 +215,7 @@ const GameLayout = () => {
           if (disconnectRef.current) {
             disconnectRef.current();
             navigate('/room');
+            localStorage.removeItem(`enteredRoom_${roomId}`);
           }
         } else {
           // '취소'를 누르면 뒤로가기 동작을 무효화하고 현재 페이지에 머무릅니다.
