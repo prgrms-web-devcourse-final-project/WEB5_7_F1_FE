@@ -19,7 +19,7 @@ const createQuizRequest = async ({ jsonData, thumbnailFile }) => {
     const formData = new FormData();
     formData.append('request', new Blob([JSON.stringify(jsonData)], { type: 'application/json' }));
     formData.append('thumbnailFile', thumbnailFile); // 이미지 파일
-    const response = await axios.post('/quizzes', formData, {
+    const response = await axios.post('/quizzes/text', formData, {
         headers: {
             'Content-Type': 'multipart/form-data',
         },

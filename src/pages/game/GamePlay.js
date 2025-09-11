@@ -11,6 +11,7 @@ import {
   questionsAtom,
   questionStartAtom,
   quizStartedAtom, // 새로 추가한 아톰
+  quizTypeAtom,
 } from '../../state/atoms';
 import WinnerModal from '../../layout/game/components/WinnerModal';
 
@@ -29,6 +30,7 @@ function GamePlay() {
   const [gameResult, setGameResult] = useRecoilState(gameResultAtom);
   const [visibleQuestion, setVisibleQuestion] = useState(false);
   const [showWinnerModal, setShowWinnerModal] = useState(false);
+  const [quizType] = useRecoilState(quizTypeAtom);
 
   // useSetRecoilState를 사용하여 quizStartedAtom을 업데이트하는 함수를 가져옵니다.
   const setQuizStartedState = useSetRecoilState(quizStartedAtom);
@@ -147,6 +149,7 @@ function GamePlay() {
                 questions &&
                 questions[currentQuestion.round - 1].question
               }
+              quizType={quizType}
             />
           )}
         </div>

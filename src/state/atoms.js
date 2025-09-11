@@ -86,3 +86,8 @@ export const quizStartedAtom = atom({
   key: 'quizStartedAtom',
   default: false,
 });
+
+export const quizTypeAtom = atom({
+  key: 'quizTypeAtom',
+  default: 'TEXT',
+});

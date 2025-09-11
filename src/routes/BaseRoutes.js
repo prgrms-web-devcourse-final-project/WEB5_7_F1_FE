@@ -13,6 +13,7 @@ import MyPage from "../pages/mypage/MyPage";
 import HostPage from "../pages/game/HostPage";
 import ParticipantPage from "../pages/game/ParticipantPage";
 import EditQuiz from "../pages/quiz/EditQuiz";
+import CreateImageQuiz from "../pages/quiz/CreateImageQuiz";
 import AdminLogin from "../pages/login/AdminLogin";
 import UserList from "../pages/admin/UserList";
 
@@ -33,6 +34,7 @@ const BaseRoutes = () => {
             <Route path="/quiz" element={<Layout />}>
                 <Route index element={<QuizList />} />
                 <Route path={"create"} element={<CreateQuiz />} />
+                <Route path={"create-image"} element={<CreateImageQuiz />} />
                 <Route path={":id/edit"} element={<EditQuiz />} />
             </Route>
             <Route path="/rank" element={<Layout />}>

@@ -1,6 +1,13 @@
 import styles from './quiz.module.scss';
 import {Image, Stack} from "react-bootstrap";
 
+// 상대 경로 앞에 슬래시를 보장해 Public 기준에서 로드되도록 보정
+const ensureLeadingSlash = (url) => {
+    if (!url) return url;
+    if (/^https?:\/\//i.test(url)) return url; // 절대 URL은 그대로 사용
+    return url.startsWith('/') ? url : `/${url}`;
+}
+
 const QuizCard = ({ quiz, onClick }) => {
     return (
         <div 
@@ -55,7 +62,7 @@ const QuizCard = ({ quiz, onClick }) => {
                     }}
                 >
                     <Image 
-                        src={quiz?.thumbnailUrl}
+                        src={ensureLeadingSlash(quiz?.thumbnailUrl)}
                         alt="퀴즈 이미지"
                         style={{
                             width: '100%',

@@ -15,6 +15,7 @@ import {
   stompSendMessageAtom,
   systemNoticeAtom,
   quizStartedAtom,
+  quizTypeAtom,
 } from '../../state/atoms';
 import useStompClient from '../../hooks/useStompClient';
 import { useCallback, useEffect, useRef, useLayoutEffect } from 'react';
@@ -51,6 +52,7 @@ const GameLayout = () => {
   const setSystemNotice = useSetRecoilState(systemNoticeAtom);
   const setSendMessage = useSetRecoilState(stompSendMessageAtom);
   const setLoginUser = useSetRecoilState(loginUserAtom);
+  const setQuizType = useSetRecoilState(quizTypeAtom);
   const navigate = useNavigate();
 
   const isQuizStarted = useRecoilValue(quizStartedAtom);
@@ -107,6 +109,7 @@ const GameLayout = () => {
           break;
         case 'GAME_START':
           setQuestions(payload.message.questions);
+          setQuizType(payload.message.quizType);
           navigate('play');
           break;
         case 'QUESTION_START':
@@ -151,6 +154,7 @@ const GameLayout = () => {
       setRankUpdate,
       setGameResult,
       navigate,
+      setQuizType,
     ],
   );
 

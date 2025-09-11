@@ -1,5 +1,6 @@
 import {Button, Col, Form, Row, Stack} from "react-bootstrap";
 import QuizItem from "./QuizItem";
+import ImageQuizItem from "./ImageQuizItem";
 import {useEffect, useState} from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome"
 import {
@@ -15,17 +16,45 @@ import axios from "axios";
 import {useApiMutation} from "../../hooks/useApiMutation";
 import {useApiQuery} from "../../hooks/useApiQuery";
 import Spinner from "../../shared/Spinner";
+import imageCompression from 'browser-image-compression';
+
+const ensureLeadingSlash = (url) => {
+    if (!url) return url;
+    if (/^https?:\/\//i.test(url)) return url; // 절대 URL은 그대로 사용
+    return url.startsWith('/') ? url : `/${url}`;
+}
 
 const editQuizRequest = async ({ quizId, jsonData, thumbnailFile }) => {
     const formData = new FormData();
-    formData.append('request', new Blob([JSON.stringify(jsonData)], { type: 'application/json' }));
+    formData.append('request', new Blob([JSON.stringify(jsonData)], { type: 'application/json' }), 'request.json');
     if (thumbnailFile) {
         formData.append('thumbnailFile', thumbnailFile);
     }
-    const response = await axios.put(`/quizzes/${quizId}`, formData, {
+    const response = await axios.put(`/quizzes/text/${quizId}`, formData);
+    return response.data;
+}
+
+const editImageQuizRequest = async ({ quizId, jsonData, thumbnailFile, questionImageFiles }) => {
+    const formData = new FormData();
+    formData.append('request', new Blob([JSON.stringify(jsonData)], { type: 'application/json' }), 'request.json');
+    if (thumbnailFile) {
+        formData.append('thumbnailFile', thumbnailFile);
+    }
+    // 질문 이미지 배열 업로드
+    questionImageFiles.forEach((file) => {
+        formData.append('questionImageFiles', file);
+    });
+    const response = await axios.put(`/quizzes/image/${quizId}`, formData, {
         headers: {
             'Content-Type': 'multipart/form-data',
         },
+    });
+    return response.data;
+}
+
+const deleteQuestionsRequest = async ({ quizId, questionIds }) => {
+    const response = await axios.delete(`/quizzes/${quizId}/questions`, {
+        data: questionIds
     });
     return response.data;
 }
@@ -41,8 +70,11 @@ const EditQuiz = () => {
     const [quizImageFile, setQuizImageFile] = useState(null); // 새로 업로드된 파일
     const [quizTitle, setQuizTitle] = useState('');
     const [quizDescription, setQuizDescription] = useState('');
+    const [quizType, setQuizType] = useState('TEXT'); // 기본값은 TEXT
     const navigate = useNavigate();
     const { openConfirm } = useConfirm();
+    
+    // 텍스트 퀴즈용 상태
     const [items, setItems] = useState([
         { content: '', answer: '' },
         { content: '', answer: '' },
@@ -55,6 +87,23 @@ const EditQuiz = () => {
         { content: '', answer: '' },
         { content: '', answer: '' },
     ]);
+
+    // 이미지 퀴즈용 상태
+    const [imageItems, setImageItems] = useState([
+        { id: null, imageFile: null, answer: '', imageUrl: null },
+        { id: null, imageFile: null, answer: '', imageUrl: null },
+        { id: null, imageFile: null, answer: '', imageUrl: null },
+        { id: null, imageFile: null, answer: '', imageUrl: null },
+        { id: null, imageFile: null, answer: '', imageUrl: null },
+        { id: null, imageFile: null, answer: '', imageUrl: null },
+        { id: null, imageFile: null, answer: '', imageUrl: null },
+        { id: null, imageFile: null, answer: '', imageUrl: null },
+        { id: null, imageFile: null, answer: '', imageUrl: null },
+        { id: null, imageFile: null, answer: '', imageUrl: null },
+    ]);
+
+    // 삭제된 문제 ID 추적
+    const [deletedQuestionIds, setDeletedQuestionIds] = useState([]);
 
     const { data, isLoading: isQuizLoading } = useApiQuery(
         ['quiz', quizId],
@@ -69,8 +118,22 @@ const EditQuiz = () => {
         if (data) {
             setQuizTitle(data.title);
             setQuizDescription(data.description);
-            setPreviewUrl(data.thumbnailUrl);
-            setItems(data.questions);
+            setPreviewUrl(ensureLeadingSlash(data.thumbnailUrl));
+            setQuizType(data.quizType || 'TEXT');
+            
+            if (data.quizType === 'IMAGE') {
+                // 이미지 퀴즈인 경우 (기존 이미지 URL은 content에 담겨옴)
+                const imageQuestions = data.questions.map(q => ({
+                    id: q.id,
+                    imageFile: null, // 새로 업로드된 파일
+                    answer: q.answer,
+                    imageUrl: ensureLeadingSlash(q.content) // 기존 이미지 URL 보정
+                }));
+                setImageItems(imageQuestions);
+            } else {
+                // 텍스트 퀴즈인 경우
+                setItems(data.questions);
+            }
         }
     }, [data])
 
@@ -85,79 +148,171 @@ const EditQuiz = () => {
         },
     });
 
+    const { mutate: editImageQuizMutate, isLoading: isImageQuizEditLoading } = useApiMutation(editImageQuizRequest, {
+        onSuccess: () => {
+            console.log('이미지 퀴즈 수정 성공');
+            openConfirm({
+                title: '저장이 완료되었습니다.',
+                callback: () => navigate('/quiz'),
+                showCancelButton: false
+            })
+        },
+    });
+
+    const { mutate: deleteQuestionsMutate } = useApiMutation(deleteQuestionsRequest, {
+        onSuccess: () => {
+            console.log('삭제된 문제들 처리 완료');
+        },
+    });
+
     const handleQuizItemChange = (index, field, value) => {
         const newItems = [...items];
         newItems[index][field] = value;
         setItems(newItems);
     };
 
+    const handleImageQuizItemChange = (index, field, value) => {
+        const newItems = [...imageItems];
+        newItems[index][field] = value;
+        setImageItems(newItems);
+    };
+
     const handleQuizItemAdd = () => {
-        setItems([...items, { content: '', answer: '' }]);
+        if (quizType === 'IMAGE') {
+            setImageItems([...imageItems, { id: null, imageFile: null, answer: '', imageUrl: null }]);
+        } else {
+            setItems([...items, { content: '', answer: '' }]);
+        }
     };
 
     const handleQuizItemRemove = (index) => {
-        setItems(items.filter((_, i) => i !== index));
+        if (quizType === 'IMAGE') {
+            const itemToRemove = imageItems[index];
+            // 기존 문제인 경우 삭제 목록에 추가
+            if (itemToRemove.id) {
+                setDeletedQuestionIds(prev => [...prev, itemToRemove.id]);
+            }
+            setImageItems(imageItems.filter((_, i) => i !== index));
+        } else {
+            setItems(items.filter((_, i) => i !== index));
+        }
     };
 
-    const isAllInputsFilled = items.length >= 10 && items.every(
-        (item) => item.content.trim() !== '' && item.answer.trim() !== ''
-    );
+    const isAllInputsFilled = () => {
+        if (quizType === 'IMAGE') {
+            return imageItems.length >= 10 && imageItems.every(
+                (item) => (item.imageFile || item.imageUrl) && item.answer.trim() !== ''
+            );
+        } else {
+            return items.length >= 10 && items.every(
+                (item) => item.content.trim() !== '' && item.answer.trim() !== ''
+            );
+        }
+    };
 
     const handleSaveClick = () => {
-        // 공백 제거된 문자열 기준
         const trimmedTitle = quizTitle.trim();
         const trimmedDescription = quizDescription.trim();
 
-        // 제목 길이 확인
         if (trimmedTitle.length < 2 || trimmedTitle.length > 30) {
             openConfirm({title: '제목은 공백 제외 2~30자 사이여야 합니다.'});
             return;
         }
 
-        // 설명 길이 확인
         if (trimmedDescription.length < 10 || trimmedDescription.length > 50) {
             openConfirm({title: '설명은 공백 제외 10~50자 사이여야 합니다.'});
             return;
         }
 
-        // 퀴즈 수 확인
-        if (items.length < 10 || items.length > 80) {
-            openConfirm({title: '퀴즈는 최소 10개, 최대 80개까지 등록할 수 있습니다.'});
-            return;
-        }
-
-        // 각 문제의 길이와 정답 길이 확인
-        for (let i = 0; i < items.length; i++) {
-            const { content, answer } = items[i];
-            const trimmedContent = content.trim();
-            const trimmedAnswer = answer.trim();
-
-            if (trimmedContent.length < 5 || trimmedContent.length > 30) {
-                openConfirm({title: `문제 ${i + 1}의 내용은 공백 제외 5~30자 사이여야 합니다.`});
+        if (quizType === 'IMAGE') {
+            // 이미지 퀴즈 검증
+            if (imageItems.length < 10 || imageItems.length > 80) {
+                openConfirm({title: '퀴즈는 최소 10개, 최대 80개까지 등록할 수 있습니다.'});
                 return;
             }
 
-            if (trimmedAnswer.length < 1 || trimmedAnswer.length > 30) {
-                openConfirm({title: `문제 ${i + 1}의 정답은 공백 제외 1~30자 사이여야 합니다.`});
-                return;
-            }
-        }
+            for (let i = 0; i < imageItems.length; i++) {
+                const { imageFile, imageUrl, answer } = imageItems[i];
+                const trimmedAnswer = answer.trim();
 
-        // 모든 조건 통과 시 API 호출
-        const jsonData = {
-            title: trimmedTitle,
-            description: trimmedDescription,
-            questions: items.map(({ content, answer }) => ({
-                content: content.trim(),
+                if (!imageFile && !imageUrl) {
+                    openConfirm({title: `문제 ${i + 1}의 이미지가 필요합니다.`});
+                    return;
+                }
+
+                if (trimmedAnswer.length < 1 || trimmedAnswer.length > 30) {
+                    openConfirm({title: `문제 ${i + 1}의 정답은 공백 제외 1~30자 사이여야 합니다.`});
+                    return;
+                }
+            }
+
+            // 이미지 퀴즈 저장 로직
+            const questions = imageItems.map(({ id, imageFile, answer }) => ({
+                id: id, // 기존 ID가 있으면 사용, 없으면 null
+                imageFile: !!imageFile, // 이미지가 수정되었는지 여부
                 answer: answer.trim(),
-            })),
-        };
+            }));
 
-        editQuizMutate({
-            quizId,
-            jsonData,
-            thumbnailFile: quizImageFile
-        });
+            const questionImageFiles = imageItems
+                .filter(item => item.imageFile) // 새로 업로드된 이미지만
+                .map(item => item.imageFile);
+
+            const jsonData = {
+                title: trimmedTitle,
+                description: trimmedDescription,
+                questions: questions,
+            };
+
+            editImageQuizMutate({
+                quizId,
+                jsonData,
+                thumbnailFile: quizImageFile,
+                questionImageFiles,
+            });
+
+            // 삭제된 문제들 처리
+            if (deletedQuestionIds.length > 0) {
+                deleteQuestionsMutate({ quizId, questionIds: deletedQuestionIds });
+            }
+        } else {
+            // 텍스트 퀴즈 검증
+            if (items.length < 10 || items.length > 80) {
+                openConfirm({title: '퀴즈는 최소 10개, 최대 80개까지 등록할 수 있습니다.'});
+                return;
+            }
+
+            for (let i = 0; i < items.length; i++) {
+                const { content, answer } = items[i];
+                const trimmedContent = content.trim();
+                const trimmedAnswer = answer.trim();
+
+                if (trimmedContent.length < 5 || trimmedContent.length > 30) {
+                    openConfirm({title: `문제 ${i + 1}의 내용은 공백 제외 5~30자 사이여야 합니다.`});
+                    return;
+                }
+
+                if (trimmedAnswer.length < 1 || trimmedAnswer.length > 30) {
+                    openConfirm({title: `문제 ${i + 1}의 정답은 공백 제외 1~30자 사이여야 합니다.`});
+                    return;
+                }
+            }
+
+            // 텍스트 퀴즈 저장 로직
+            const jsonData = {
+                title: trimmedTitle,
+                description: trimmedDescription,
+                questions: items.map(({ content, answer }) => ({
+                    content: content.trim(),
+                    answer: answer.trim(),
+                })),
+            };
+
+            editQuizMutate({
+                quizId,
+                jsonData,
+                thumbnailFile: quizImageFile
+            });
+        }
     }
 
     const f1Styles = {
@@ -246,15 +401,15 @@ const EditQuiz = () => {
 
     return (
         <div style={f1Styles.container}>
-            <Spinner show={isQuizEditLoading || isQuizLoading} />
+            <Spinner show={isQuizEditLoading || isImageQuizEditLoading || isQuizLoading} />
             <div className="container-fluid p-4" style={{ position: 'relative', zIndex: 1 }}>
                 {/* Header */}
                 <div style={{...f1Styles.header, position: 'relative', zIndex: 2}}>
                     <h1 className="mb-0" style={{ fontSize: '2.5rem', fontWeight: '700', color: '#e10600' }}>
-                        퀴즈 수정
+                        {quizType === 'IMAGE' ? '이미지 퀴즈 수정' : '퀴즈 수정'}
                     </h1>
                     <p className="mb-0 mt-2" style={{ color: '#a0a0a0', fontSize: '1.1rem' }}>
-                        최고의 퀴즈 경험을 만들어보세요
+                        {quizType === 'IMAGE' ? '이미지로 문제를 만들고 텍스트로 정답을 입력하세요' : '최고의 퀴즈 경험을 만들어보세요'}
                     </p>
                 </div>
 
@@ -369,9 +524,20 @@ const EditQuiz = () => {
                                         type="file"
                                         accept="image/*"
                                         style={{ display: 'none' }}
-                                        onChange={(e) => {
+                                        onChange={async (e) => {
                                             const file = e.target.files[0];
-                                            if (file) {
+                                            if (!file) {
+                                                setQuizImageFile(null);
+                                                return;
+                                            }
+                                            try {
+                                                const compressed = await imageCompression(file, {
+                                                    maxSizeMB: 1,
+                                                    useWebWorker: true,
+                                                });
+                                                const compressedFile = new File([compressed], file.name, { type: compressed.type || file.type });
+                                                setQuizImageFile(compressedFile);
+                                            } catch (err) {
                                                 setQuizImageFile(file);
                                             }
                                         }}
@@ -391,7 +557,7 @@ const EditQuiz = () => {
                                         문제 목록
                                     </h3>
                                     <span style={f1Styles.badge}>
-                                        {items.length} / 80
+                                        {quizType === 'IMAGE' ? imageItems.length : items.length} / 80
                                     </span>
                                 </div>
                             </div>
@@ -400,7 +566,7 @@ const EditQuiz = () => {
                             <div className="row py-3" style={{ backgroundColor: '#252538', margin: '0' }}>
                                 <div className="col-6 text-center">
                                     <strong style={{ color: '#e10600', fontSize: '0.9rem', textTransform: 'uppercase' }}>
-                                        질문
+                                        {quizType === 'IMAGE' ? '질문 이미지' : '질문'}
                                     </strong>
                                 </div>
                                 <div className="col-6 text-center">
@@ -413,16 +579,30 @@ const EditQuiz = () => {
                             {/* Questions List */}
                             <div style={f1Styles.scrollArea} className="flex-grow-1 py-3">
                                 <Stack gap={3}>
-                                    {items.map((item, index) => (
-                                        <QuizItem
-                                            key={index}
-                                            index={index}
-                                            content={item.content}
-                                            answer={item.answer}
-                                            onChange={handleQuizItemChange}
-                                            onRemove={handleQuizItemRemove}
-                                        />
-                                    ))}
+                                                                         {quizType === 'IMAGE' ? (
+                                         imageItems.map((item, index) => (
+                                             <ImageQuizItem
+                                                 key={index}
+                                                 index={index}
+                                                 imageFile={item.imageFile}
+                                                 answer={item.answer}
+                                                 imageUrl={item.imageUrl}
+                                                 onChange={handleImageQuizItemChange}
+                                                 onRemove={handleQuizItemRemove}
+                                             />
+                                         ))
+                                     ) : (
+                                        items.map((item, index) => (
+                                            <QuizItem
+                                                key={index}
+                                                index={index}
+                                                content={item.content}
+                                                answer={item.answer}
+                                                onChange={handleQuizItemChange}
+                                                onRemove={handleQuizItemRemove}
+                                            />
+                                        ))
+                                    )}
                                 </Stack>
                             </div>
 
@@ -432,7 +612,7 @@ const EditQuiz = () => {
                                     <Button 
                                         style={f1Styles.secondaryButton}
                                         onClick={handleQuizItemAdd}
-                                        disabled={items.length >= 80}
+                                        disabled={quizType === 'IMAGE' ? imageItems.length >= 80 : items.length >= 80}
                                         onMouseEnter={(e) => {
                                             e.target.style.backgroundColor = '#38384a';
                                             e.target.style.borderColor = '#e10600';
@@ -452,7 +632,7 @@ const EditQuiz = () => {
                                         <Button 
                                             style={f1Styles.primaryButton}
                                             className="w-100"
-                                            disabled={!isAllInputsFilled} 
+                                            disabled={!isAllInputsFilled()} 
                                             onClick={handleSaveClick}
                                             onMouseEnter={(e) => {
                                                 e.target.style.backgroundColor = '#c10500';

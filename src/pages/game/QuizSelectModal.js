@@ -4,6 +4,13 @@ import { X, Search, ChevronLeft, ChevronRight, Clock, FileText, Loader2 } from "
 import {useApiQuery} from "../../hooks/useApiQuery";
 import axios from "axios";
 
+// 상대 경로 앞에 슬래시를 보장해 Public 기준에서 로드되도록 보정
+const ensureLeadingSlash = (url) => {
+    if (!url) return url;
+    if (/^https?:\/\//i.test(url)) return url; // 절대 URL은 그대로 사용
+    return url.startsWith('/') ? url : `/${url}`;
+}
+
 function QuizSelectModal({ isOpen, onClose, onSelect }) {
     const [searchTerm, setSearchTerm] = useState("")
     const [currentPage, setCurrentPage] = useState(1)
@@ -188,11 +195,11 @@ function QuizSelectModal({ isOpen, onClose, onSelect }) {
                                         >
                                             <div className="aspect-video bg-gray-200 relative">
                                                 <img
-                                                    src={quiz.thumbnailUrl || "/placeholder.svg?height=120&width=200&text=No+Image"}
+                                                    src={ensureLeadingSlash(quiz.thumbnailUrl) || "/placeholder.svg?height=120&width=200&text=No+Image"}
                                                     alt={quiz.title}
                                                     className="w-full h-full object-cover"
                                                     onError={(e) => {
-                                                        e.target.src = "/placeholder.svg?height=120&width=200&text=No+Image"
+                                                        e.target.src = ensureLeadingSlash("/placeholder.svg?height=120&width=200&text=No+Image")
                                                     }}
                                                 />
                                                 {selectedQuizId === quiz.quizId && (

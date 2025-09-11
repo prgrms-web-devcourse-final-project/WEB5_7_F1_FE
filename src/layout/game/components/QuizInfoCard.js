@@ -1,5 +1,12 @@
 import {Clock, List, MessageCircleQuestion} from "lucide-react"
 
+// 상대 경로 앞에 슬래시를 보장해 Public 기준에서 로드되도록 보정
+const ensureLeadingSlash = (url) => {
+    if (!url) return url;
+    if (/^https?:\/\//i.test(url)) return url; // 절대 URL은 그대로 사용
+    return url.startsWith('/') ? url : `/${url}`;
+}
+
 function QuizInfoCard({ gameSetting }) {
   return (
     <div className="bg-white rounded-2xl shadow-lg p-8 mb-6">
@@ -15,7 +22,7 @@ function QuizInfoCard({ gameSetting }) {
         <div className="relative">
           <img
             className="w-full h-64 object-cover rounded-xl"
-            src={gameSetting?.quiz.thumbnailUrl}
+            src={ensureLeadingSlash(gameSetting?.quiz.thumbnailUrl)}
             alt="F1 race car on track with checkered flag"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent rounded-xl"></div>

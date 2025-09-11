@@ -1,4 +1,4 @@
-import {Button, Col, Container, Form, Row} from "react-bootstrap";
+import {Button, Col, Container, Form, Modal, Row} from "react-bootstrap";
 import {useState} from "react";
 import QuizCard from "./QuizCard";
 import QuizDetailModal from "./QuizDetailModal";
@@ -26,6 +26,7 @@ const QuizList = () => {
     const [selectedSearchType, setSelectedSearchType] = useState({ value: 'title', label: '제목' });
     const [quizDetailModalOpen, setQuizDetailModalOpen] = useState(false);
     const [selectedQuiz, setSelectedQuiz] = useState(null);
+    const [createSelectOpen, setCreateSelectOpen] = useState(false);
     const [queryParams, setQueryParams] = useState({
         page: 1,
         size: 8,
@@ -163,7 +164,7 @@ const QuizList = () => {
                 </div>
 
                 {/* 퀴즈 생성 버튼 */}
-                <Button variant="warning" onClick={() => navigate('create')} className={`${styles.buttonBase} ${styles.createButton}`}>
+                <Button variant="warning" onClick={() => setCreateSelectOpen(true)} className={`${styles.buttonBase} ${styles.createButton}`}>
                     퀴즈 생성하기
                 </Button>
             </div>
@@ -240,6 +241,22 @@ const QuizList = () => {
                 onClose={() => setQuizDetailModalOpen(false)}
                 quiz={selectedQuiz}
             />
+
+            {/* 퀴즈 타입 선택 모달 */}
+            <Modal show={createSelectOpen} onHide={() => setCreateSelectOpen(false)} centered>
+                <Modal.Header closeButton>
+                    <Modal.Title>퀴즈 유형 선택</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <div className="d-flex flex-column gap-3">
+                        <Button variant="primary" onClick={() => navigate('create')}>텍스트 퀴즈 생성</Button>
+                        <Button variant="secondary" onClick={() => navigate('create-image')}>이미지 퀴즈 생성</Button>
+                    </div>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="outline-secondary" onClick={() => setCreateSelectOpen(false)}>닫기</Button>
+                </Modal.Footer>
+            </Modal>
         </Container>
     );
 };

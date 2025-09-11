@@ -1,11 +1,19 @@
-import {Button, Modal, Stack, Image} from "react-bootstrap";
-import {useNavigate} from "react-router-dom";
+import React from 'react';
+import { Modal, Button, Image, Stack } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
 import useConfirm from "../../hooks/useConfirm";
 import {useApiMutation} from "../../hooks/useApiMutation";
 import axios from "axios";
 import Spinner from "../../shared/Spinner";
 import {useRecoilValue} from "recoil";
 import {loginUserAtom} from "../../state/atoms";
+
+// 상대 경로 앞에 슬래시를 보장해 Public 기준에서 로드되도록 보정
+const ensureLeadingSlash = (url) => {
+    if (!url) return url;
+    if (/^https?:\/\//i.test(url)) return url; // 절대 URL은 그대로 사용
+    return url.startsWith('/') ? url : `/${url}`;
+}
 
 const deleteQuizRequest = async (quizId) => {
     return  await axios.delete(`/quizzes/${quizId}`);
@@ -97,7 +105,7 @@ const QuizDetailModal = ({ isOpen, onClose, quiz }) => {
                     >
                         {quiz.thumbnailUrl ? (
                             <Image 
-                                src={quiz.thumbnailUrl} 
+                                src={ensureLeadingSlash(quiz.thumbnailUrl)} 
                                 alt="퀴즈 썸네일"
                                 className="rounded shadow-sm"
                                 style={{
