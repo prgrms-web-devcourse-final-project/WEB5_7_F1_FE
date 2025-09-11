@@ -16,6 +16,7 @@ import EditQuiz from "../pages/quiz/EditQuiz";
 import CreateImageQuiz from "../pages/quiz/CreateImageQuiz";
 import AdminLogin from "../pages/login/AdminLogin";
 import UserList from "../pages/admin/UserList";
+import TestUserLogin from "../pages/login/TestUserLogin";
 
 const BaseRoutes = () => {
     return (
@@ -47,6 +48,7 @@ const BaseRoutes = () => {
                 <Route index element={<UserList />} />
             </Route>
             <Route path={"/admin/login"} element={<AdminLogin />} />
+            <Route path={"/user/test/login/:userId"} element={<TestUserLogin />} />
             {/* 에러페이지 */}
             <Route path={"*"} element={<Error404 />} />
         </Routes>
